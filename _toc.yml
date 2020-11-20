@@ -1,0 +1,15 @@
+- file: Intro_and_Desc_of_Data
+  title: INTRODUCTION AND DESCRIPTION OF DATASET
+
+- part: Data Cleaning and Processing
+  chapters:
+  - file: processing
+
+- part: Forecasting
+  chapters:
+  - file: forecasting  
+
+- part: Concluding Section
+  chapters:
+  - file: Summary_Conclusion
+  
