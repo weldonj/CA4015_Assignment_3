@@ -4,7 +4,7 @@
 
 In our previous assignment we built a model that could classify sleep stages based on a number of time series features. The next stage is to create a model that will take a look at this same sleep stage data and allow us to forecast how a subject's sleep cycle will look in the immediate future. 
 
-**Motivations For Building This Forecasting Model And Tracking Sleep Patterns In General-** 
+**Motivations for Building this Forecasting Model and Tracking Sleep Patterns in General-** 
 
 The Institute of Medicine (US) Committee on Sleep Research estimates that between 50 and 70 million Americans have trouble with the duration and the quality of their sleep. They have found that the negative effects of this are even more impactful when the poor quality sleep and/or inadequate sleep duration takes place on a chronic, daily basis, rather than on occasion[1].
 
@@ -12,9 +12,11 @@ There are a whole host of detrimental physical effects that are causally associa
 
 The negative effects aren't just physical, Strine and Chapman[4] found that poor sleep quality also has severe negative effects on mental health and wellbeing. Peterman et al[5] also showed a link between sleep disorders and increases in anxiety and depression. 
 
-**Some Novel Uses That We Have Come Up With For Why You May Want To Be Able To Forecast Sleep Stages**
+**Some Novel Uses that We have come up with for why You may want to be able to Forecast Sleep Stages**
 
 If someone has a tendency to sleepwalk, it may be useful to be able to have some kind of alert system that will activate before this person is likely to start. This sleepwalking happens in the non-rem sleep stages[6] and so it may be useful, for the parents of a child for example, to forecast when their child is likely to enter this stage.
+
+While battery life in these smart watches has gotten a lot better over recent years, they could of course still die during a night's sleep. If this happened and we only had a portion of the night's sleep data a good forecasting model may be able to fill in the rest of the night with a useful degree of accuracy so the subject can still have some idea of how the sleep went.
 
 
 
