@@ -18,9 +18,9 @@ The negative effects aren't just physical, Strine and Chapman[4] found that poor
 
  - While battery life in these smart watches has gotten a lot better over recent years, they could of course still die during a night's sleep. If this happened and we only had a portion of the night's sleep data a good forecasting model may be able to fill in the rest of the night with a useful degree of accuracy so the subject can still have some idea of how the sleep went.
 
-Similarly, if something out of the ordinary happened during a given night and interupted your sleep, you may want to compare the true sleep data for the night with a forecast version that ignores where you unexpectedly woke up and instead fills in the remaining hours based on the previous undisturbed. 
+ - Similarly, if something out of the ordinary happened during a given night and interupted your sleep, you may want to compare the true sleep data for the night with a forecast version that ignores where you unexpectedly woke up and instead fills in the remaining hours based on the previous undisturbed. 
 
-If the model was trained on data that included all of the awake hours from the day before the sleep, it would be theoretically possible to forecast how many good quality hours sleep you may get based on when you go to sleep that night. This could help influence decisions on when you should go to bed on a given day to try to ensure you get adequate sleep duration and quality.
+ - If the model was trained on data that included all of the awake hours from the day before the sleep, it would be theoretically possible to forecast how many good quality hours sleep you may get based on when you go to sleep that night. This could help influence decisions on when you should go to bed on a given day to try to ensure you get adequate sleep duration and quality.
 
 **References -** 
 
