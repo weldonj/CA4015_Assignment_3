@@ -1,4 +1,4 @@
-## Literature Review and Motivations for Forecasting stage
+## Literature Review and Motivations for Forecasting Stage
 
 **Background -** 
 
