@@ -1,9 +1,11 @@
 ## Literature Review and Motivations for Forecasting stage
 
 **Background -** 
+
 In our previous assignment we built a model that could classify sleep stages based on a number of time series features. The next stage is to create a model that will take a look at this same sleep stage data and allow us to forecast how a subject's sleep cycle will look in the immediate future. 
 
 **Motivations for building this Forecasting Model and Tracking sleep patterns in general-** 
+
 The Institute of Medicine (US) Committee on Sleep Research estimates that between 50 and 70 million Americans have trouble with the duration and the quality of their sleep. They have found that the negative effects of this are even more impactful when the poor quality sleep and/or inadequate sleep duration takes place on a chronic, daily basis, rather than on occasion[1].
 
 There are a whole host of detrimental physical effects that are causally associated with poor quality sleep and sleep deprivation. Palagini et al[2] showed how sleep loss can lead to high blood pressure/hypertension. Meier-Ewert et al[3] did similar for cardiovascular risk, showing a clear risk increase with chronic sleep loss.
@@ -11,6 +13,7 @@ There are a whole host of detrimental physical effects that are causally associa
 The negative effects aren't just physical, Strine and Chapman[4] found that poor sleep quality also has severe negative effects on mental health and wellbeing. Peterman et al[5] also showed a link between sleep disorders and increases in anxiety and depression. 
 
 **Some novel uses that we have come up with for why you may want to be able to forecast sleep stages**
+
 If someone has a tendency to sleepwalk, it may be useful to be able to have some kind of alert system that will activate before this person is likely to start. This sleepwalking happens in the non-rem sleep stages[6] and so it may be useful, for the parents of a child for example, to forecast when their child is likely to enter this stage.
 
 
