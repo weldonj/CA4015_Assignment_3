@@ -1,4 +1,4 @@
-title: "CA4015 Assignment 2 - Time Series Classification - Jack Boylan, Daniel O'Boyle, John Weldon"
-logo: images/classification.png
+title: "CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon"
+logo: images/forecasting.png
 execute:
     execute_notebooks: "off"
