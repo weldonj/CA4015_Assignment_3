@@ -1,625 +1,429 @@
-!apt-get install swig -y
-!pip install Cython numpy
-
-# sometimes you have to run the next command twice on colab
-# I haven't figured out why
-!pip install auto-sklearn
-
 from google.colab import drive
 drive.mount('/content/drive')
 
+# You may have a different directory you want to change to...
 import os
 os.chdir('/content/drive/My Drive/CA4015/sleep_classify')
 
-import pandas as pd
 import numpy as np
-# read in our windowed features and matching labels
 
-full_set_features = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_features.csv')
-full_set_true_labels = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_labels.csv')
+x_clean = np.loadtxt('./outputs/cropped/46343_cleaned_motion.out')
+print(x_clean.shape)
 
-# we do not require id and time step columns for this approach
-full_set_features = full_set_features.drop(['Unnamed: 0', 'id'], axis=1)
-full_set_true_labels = full_set_true_labels.drop(['0', 'id'], axis=1)
+x_raw = np.loadtxt('./data/motion/46343_acceleration.txt')
+print(x_raw.shape)
 
+import matplotlib.pyplot as plt
 
-full_set_true_labels["1"].unique()
+sampfrom = 0
+sampto = 85000 # Pick any value
 
-print("Full Set Features", "\n", full_set_features)
-print("\nFull Set Labels", "\n", full_set_true_labels)
+plt.figure()
+plt.plot(x_clean[sampfrom:sampto,0],x_clean[sampfrom:sampto,1], label='x')
+plt.plot(x_clean[sampfrom:sampto,0],x_clean[sampfrom:sampto,2], label='y')
+plt.plot(x_clean[sampfrom:sampto,0],x_clean[sampfrom:sampto,3], label='z')
+plt.legend()
+plt.title('Filtered Movement Data')
+plt.show()
 
-label_array = full_set_true_labels.values.ravel()
-print(label_array.shape)
-label_array
+plt.figure()
+plt.plot(x_raw[sampfrom:sampto,0],x_raw[sampfrom:sampto,1], label='x')
+plt.plot(x_raw[sampfrom:sampto,0],x_raw[sampfrom:sampto,2], label='y')
+plt.plot(x_raw[sampfrom:sampto,0],x_raw[sampfrom:sampto,3], label='z')
+plt.legend()
+plt.title('Raw Movement Data')
+plt.show()
 
-# first we'll create a binary label set, indicating 0 for awake and 1 for asleep
+# Load the labels for one subject
+labels = np.loadtxt('./data/labels/46343_labeled_sleep.txt')
+print(labels.shape)
+np.unique(labels[:,1])
 
-binary_label_array = label_array.copy()
-binary_label_array[binary_label_array > 0] = 1
-np.unique(binary_label_array)
+# Show me a sample of the labels
+print(labels[520:530,:])
 
-from sklearn.model_selection import train_test_split
+# Get a set of patient ids
+FULL_SET = []
 
-# Splitting our data into training and testing sets
+import os
 
-X_train, X_test, y_train, y_test = train_test_split(full_set_features, binary_label_array, test_size=0.25)
+for filename in os.listdir("./outputs/cropped/"):
+  patient_id = filename.split("_")[0]
+  if patient_id not in FULL_SET: 
+        FULL_SET.append(patient_id)
 
-from sklearn.svm import SVC
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
+print(FULL_SET)
 
-# Implementing a C-Support Vector Classifier, 
+# choose what features we will use
+feature_set = {"motion" : True, "hr" : True, "counts" : False}
 
-clf = make_pipeline(StandardScaler(), SVC(gamma='auto'))
-clf.fit(X_train, y_train)
+import numpy as np
 
-clf.score(X_test, y_test, sample_weight=None)
+# we have 850,024 motion readings for this patient
+motion_clean = np.loadtxt('./outputs/cropped/46343_cleaned_motion.out')
+print(motion_clean.shape)
+print(motion_clean[:10,:])
 
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
+# we have 3,301 HR readings for the same patient
+hr_clean = np.loadtxt('./outputs/cropped/46343_cleaned_hr.out')
+print(hr_clean.shape)
 
-clf = DecisionTreeClassifier(random_state=0)  # min_samples_leaf=200
+# Load the labels for one subject
+labels = np.loadtxt('./data/labels/46343_labeled_sleep.txt')
+print(labels.shape)
 
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+# Show me a sample of the labels
+print(labels[520:530,:])
 
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
+# the index isn't the same for every file so we will need to calculate this for each patient
+print("First 10 label times (sec): ", labels[:10,0])
+print("Index of Motion data where time less than or equal to 30: ", np.max(np.nonzero(motion_clean[:,0] <= 30)))
+print("Index of HR data where time less than or equal to 30: ", np.max(np.nonzero(hr_clean[:,0] <= 30)))
 
-# using list comprehension + enumerate() 
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [full_set_features.columns[i] for i in res]
+# we need to chunk motion and hr data into 30 sec block so it aligns with labels
+
+def groupedAvg(myArray, N):
+    myArray = myArray[:, 1:] # remove time column
+    cum = np.cumsum(myArray,0)
+    result = cum[N-1::N]/float(N)
+    result[1:] = result[1:] - result[:-1]
+
+    remainder = myArray.shape[0] % N
+    if remainder != 0:
+        if remainder < myArray.shape[0]:
+            lastAvg = (cum[-1]-cum[-1-remainder])/float(remainder)
+        else:
+            lastAvg = cum[-1]/float(remainder)
+        result = np.vstack([result, lastAvg])
+
+    return result
+
+chunked = groupedAvg(motion_clean, N=1503)
+print(chunked[0:3])
+# remember we have 567 sleep labels for subject 46343
+# i think this is missing the first reading, because it takes the first N values to
+# represent the 30sec bin, not 0 seconds
+len(chunked)
+
+# this looks like it works above but from the length below we see it doesn't match up.
+# thats because the hr gets 5 readings in one 30sec period, 6 in the next, 5 in the next, etc...
+# it doesn't seem to give consistent number of readings every 30sec
+# so we'll need to check it every bin and change bin N to get every value
+hr_blocked = groupedAvg(hr_clean, N=5)
+print(hr_blocked[:3])
+len(hr_blocked)
+
+# this function will take the subject id, and feature set chosen by us
+# it will open the feature file and group the readings into 30sec intervals.
+# the output is a subject feature dictionary, with "key" : "value" being
+# <feature> : <pandas dataframe containing feature values that match label times>
+
+import pandas as pd
+
+def interpolate_features(subject_id, feature_set, method="linear"):
+  subject_features = dict()
+
+  labels = pd.read_table('./data/labels/{}_labeled_sleep.txt'.format(subject_id),
+                         header=None, delim_whitespace=True)
   
-# print result 
-print("\nThe list of features with importance: ") 
+  bin_index = pd.Index(pd.np.arange(0.00, labels.iloc[-1,0]+30, 30.0))
 
-print(res_feats)
-print("\nimportance\n", importance)
+  print("\nlength of subject {}'s labels file: {}\n".format(subject_id, len(labels)))
 
-predictions = clf.predict(X_test)
-print("\nTest set accuracy:\n", accuracy_score(y_test, predictions), "\n")
-print("Confusion Matrix\n", confusion_matrix(y_test, predictions), "\n")
+  for feature in feature_set:
 
-!pip install graphviz
-!pip install imageio
-import graphviz
-import pydotplus
-import io
-from scipy import misc
-import imageio
-import matplotlib.pyplot as plt
+    if feature_set[feature]:
 
+      print("Interpolating {} feature for subject {}\n".format(feature, subject_id))
 
-def show_tree(tree, path):
-    f = io.StringIO()
-    export_graphviz(tree, out_file=f)
-    pydotplus.graph_from_dot_data(f.getvalue()).write_png(path)
-    img = imageio.imread(path)
-    plt.rcParams["figure.figsize"] = (30,20)
-    plt.imshow(img)
+      df = pd.read_table('./outputs/cropped/{}_cleaned_{}.out'.format(subject_id, feature),
+                         header=None, delim_whitespace=True, index_col=0)
+
+      df = df.reindex(df.index.union(bin_index))
+      df = df.interpolate(method=method, limit_direction='both')
+      df = df.loc[df.index % 30 == 0]
+
+      subject_features[feature] = df
+
+  return subject_features, labels
 
 
-show_tree(clf, "binary_dec_tree.png")
+subject_id = 46343 #1066528 #7749105 #2598705 #4018081 #1360686 #8686948 #844359 #5383425 
 
-from sklearn import model_selection
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.svm import SVC
+sub_feats, labels = interpolate_features(subject_id, feature_set)
 
-def algorithm_comparison(X_train, y_train, X_test, y_test, n_splits=10):
-    models = []
-    models.append(("LOGISTIC REGRESSION", LogisticRegression(max_iter=1000)))
-    models.append(("LINEAR DISCRIMINANT AANALYSIS", LinearDiscriminantAnalysis()))
-    models.append(("K NEAREST NEIGHBOURS", KNeighborsClassifier()))
-    models.append(("NAIVE BAYES", GaussianNB()))
-    models.append(("DECISION TREE", DecisionTreeClassifier()))
-    models.append(("RANDOM FOREST", RandomForestClassifier()))
-    models.append(("SUPPORT VECTOR MACHINE", SVC()))
-    models.append(("ADABOOST CLASSIFIER", AdaBoostClassifier()))
+print(sub_feats)
 
-    results = []
-    names = []
+# these functions will allow us to plot our interpolated features
 
-    for name, model in models:
-      kfold = model_selection.KFold(n_splits=n_splits)
-      cv_results = model_selection.cross_val_score(model, X_train, y_train, cv=kfold, scoring="accuracy")
-      results.append(cv_results)
-      names.append(name)
-      print("Model  Mean Accuracy  95% conf interval")
-      msg = "{}: {} {}\n".format(name, cv_results.mean(), cv_results.std() * 2)
-      print(msg)
+def plot_hr_df(sub_feats, sampfrom=0, sampto=85000):
+    plt.figure(figsize=(15,7))
+    feature = "hr"
 
-      model.fit(X_train, y_train)
-      predictions = model.predict(X_test)
-      print("Test set accuracy:\n", accuracy_score(y_test, predictions), "\n")
-      print("Confusion Matrix\n", confusion_matrix(y_test, predictions), "\n")
-      print("Classification report\n" ,classification_report(y_test, predictions), "\n")
+    plt.plot(sub_feats[feature].loc[sampfrom:sampto].index,sub_feats[feature].iloc[sampfrom:sampto,0])
+    plt.xlabel("Time (sec)")
+    plt.ylabel("HR (bpm)")
 
-    return names, results
-
-
-names, results = algorithm_comparison(X_train, y_train, X_test, y_test)
-
-import matplotlib.pyplot as plt
-
-def plot_algo_comparison(names, results, title="Algorithm Comparison"):
-    fig = plt.figure(figsize=(20,10))
-    fig.suptitle(title)
-    ax = fig.add_subplot(111)
-    plt.boxplot(results)
-    ax.set_xticklabels(names)
+    plt.title('Downsampled HR data')
     plt.show()
 
-plot_algo_comparison(names, results, title="Algorithm Comparison on Binary Label Data")
 
-try:
-    import autosklearn.classification
-except:
-    os.kill(os.getpid(), 9)
-import sklearn
+def plot_motion_df(sub_feats, sampfrom=0, sampto=85000):
+    plt.figure(figsize=(15,7))
+    feature = "motion"
 
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
+    plt.plot(sub_feats[feature].loc[sampfrom:sampto].index,sub_feats[feature].iloc[sampfrom:sampto,0], label='x')
+    plt.plot(sub_feats[feature].loc[sampfrom:sampto].index,sub_feats[feature].iloc[sampfrom:sampto,1], label='y')
+    plt.plot(sub_feats[feature].loc[sampfrom:sampto].index,sub_feats[feature].iloc[sampfrom:sampto,2], label='z')
+    plt.legend()
+    plt.xlabel("Time (sec)")
+    plt.ylabel("Motion")
 
-# train model(s)
-automl.fit(X_train, y_train)
+    plt.title('Downsampled Motion data')
+    plt.show()
 
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
+plot_hr_df(sub_feats)
+plot_motion_df(sub_feats)
 
-from numpy import mean
-from numpy import std
-from sklearn.datasets import make_classification
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import KFold
-from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
+print(labels.head())
+labels.index*30
 
-def nested_cross_val(X_train, y_train, model=KNeighborsClassifier()):
+sub_feats["hr"].loc[:510]
 
-    # configure the cross-validation procedure
-    cv_inner = KFold(n_splits=3, shuffle=True, random_state=1)
+# the times at which label is -1 or 4. We want to remove these time instances from the training data
+# because we do not know what class it is
 
-    # define search space
-    pgrid = {"n_neighbors": [2, 5, 10, 30],
-              "weights": ["uniform", "distance"],
-              "algorithm": ["auto", "ball_tree", "kd_tree"],
-              "leaf_size": [15, 30],
-              "p": [1, 2, 4],
-              }
+def remove_noise(subject_feats, labels):
 
-    # define search
-    search = GridSearchCV(model, pgrid, scoring='accuracy', n_jobs=1, cv=cv_inner, refit=True)
-    # configure the cross-validation procedure
-    cv_outer = KFold(n_splits=5, shuffle=True, random_state=1)
-    # execute the nested cross-validation
-    scores = cross_val_score(search, X_train, y_train, scoring='accuracy', cv=cv_outer, n_jobs=-1)
-    # report performance
-    print('Accuracy: %.3f (%.3f)' % (mean(scores), std(scores)))
+    #noise_index = labels.loc[labels[1] == -1].index
+    print(labels.columns)
+    noise_index = labels.loc[labels[1].isin([-1, 4])].index
+    print("noise index:\n", noise_index)
 
-#nested_cross_val(X_train, y_train)
+    labels = labels.drop(index=noise_index)
+    labels = labels.set_index(0)
 
-three_label_array = label_array.copy()
-three_label_array[(three_label_array == 1) | (three_label_array == 2) | (three_label_array == 3)] = 1
-three_label_array[three_label_array == 5] = 2
+    for feature in subject_feats:
 
-np.unique(three_label_array)
-
-from sklearn.model_selection import train_test_split
-
-# Splitting our data into training and testing.
-
-X_train, X_test, y_train, y_test = train_test_split(full_set_features, three_label_array, test_size=0.25)
-
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
-
-clf = DecisionTreeClassifier(random_state=0)
-
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
-
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [full_set_features.columns[i] for i in res]
-  
-# print result 
-print("\nThe list of features with importance: ") 
-
-print(res_feats)
-print("importance\n", importance)
-
-#nested_cross_val(X_train, y_train)
-
-names, results = algorithm_comparison(X_train, y_train, X_test, y_test)
-
-plot_algo_comparison(names, results, title="Algorithm Comparison on Wake / NREM / REM Label Data")
-
-import autosklearn.classification
-import sklearn
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
-
-# train model(s)
-automl.fit(X_train, y_train)
-
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
-
-np.unique(label_array)
-
-from sklearn.model_selection import train_test_split
-
-# Splitting our data into training and testing.
-# Please don't ever train on your test data, that's a big no no!
-X_train, X_test, y_train, y_test = train_test_split(full_set_features, label_array, test_size=0.25)
-
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
-
-clf = DecisionTreeClassifier(random_state=0)
-
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
-
-# using list comprehension + enumerate() 
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [full_set_features.columns[i] for i in res]
-  
-# print result 
-print("\nThe list of features with importance: ") 
-
-print(res_feats)
-print("importance\n", importance)
-
-#nested_cross_val(X_train, y_train)
-
-names, results = algorithm_comparison(X_train, y_train, X_test, y_test)
-
-plot_algo_comparison(names, results, title="Algorithm Comparison on Wake/N1/N2/N3/REM Label Data")
-
-import autosklearn.classification
-import sklearn
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
-
-# train model(s)
-automl.fit(X_train, y_train)
-
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
-
-import pandas as pd
-import numpy as np
-
-extracted_features = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv')
-extracted_labels = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv')
-
-extracted_features = extracted_features.rename(columns={'Unnamed: 0': 'id', 'Unnamed: 1': 'time'})
-
-extracted_features.head()
-
-feats = extracted_features.columns[2:]
-feats
-
-from scipy import stats
-
-standardised = stats.zscore(extracted_features[feats])
-
-details = extracted_features.columns[:2]
-df1_std = pd.DataFrame(standardised, columns = feats)
-df1_std = df1_std.dropna(axis='columns')
-#df1_std = pd.concat([extracted_features[details], df1_std], axis=1)
-df1_std
-
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-
-# use this function to find variance captured in n PCs
-# ideally we'd like 75-90% variance captured in 2 or 3 PCs
-# to give an accurate representation of the original data
-
-def ideal_pca(df_std):
-    dims = 10 # or use len(df_std.columns)
-    pca = PCA(n_components = dims)
-    pca.fit(df_std)
-    variance = pca.explained_variance_ratio_
-    variance = np.insert(variance, 0, 0, axis=0)
-    var = np.cumsum(np.round(variance, 3)*100)
-    plt.figure(figsize=(12,6))
-    plt.ylabel('% Variance Explained')
-    plt.xlabel('# of Principal Components')
-    plt.title('PCA Analysis')
-    plt.ylim(0,100.5)
-    plt.xlim(0, dims)
-    plt.plot(var)
+      subject_feats[feature] = subject_feats[feature].drop(index=noise_index*30)
     
-ideal_pca(df1_std)
+    return subject_feats, labels
 
-pca3 = PCA(n_components = 5).fit(df1_std)
-pca3d = pca3.transform(df1_std)
-pca3d_df = pd.DataFrame(pca3d)
+sub_feats, labels = remove_noise(sub_feats, labels)
 
-print(pca3.explained_variance_ratio_)
-print("\nTotal variance captured:\n")
-print(sum(pca3.explained_variance_ratio_))
+# our hr feature data after noise index entries were removed for this subject...
+sub_feats["hr"].loc[:510]
 
-# the % variance captured by our PCs
+# ...and the matching labels
+labels.loc[:510]
 
-pca3d_df
+# now that the times all line up
+# we can combine all the features in our dictionary to use as training/testing sets
 
-from sklearn.model_selection import train_test_split
+print(labels.loc[:510], "\n")
+print(sub_feats["motion"].loc[:510], "\n")
+print(sub_feats["hr"].loc[:510], "\n")
 
-# Splitting our data into training and testing.
-X_train, X_test, y_train, y_test = train_test_split(pca3d_df, e_label_array, test_size=0.25)
+# this function will loop through our feature set and horizontally join the dataframes together
+# so our result is one dataframe with all feature columns 
 
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
+def join_features(subject_features):
 
-clf = DecisionTreeClassifier(random_state=0)
+    # join the feature dfs horizontally
+    joined_feats = pd.DataFrame([])
 
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    for feature in subject_features:
+        if feature == "motion":
+          subject_features[feature] = subject_features[feature].rename(columns={1:"x",2:"y",3:"z"})
+        elif feature == "hr":
+          subject_features[feature] = subject_features[feature].rename(columns={1:"hr"})
 
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
+        joined_feats = pd.concat([joined_feats, subject_features[feature]], axis=1)
+    return joined_feats
 
-# using list comprehension + enumerate() 
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [extracted_features.columns[i] for i in res]
-  
-# print result 
-print("\nThe list of features with importance: ") 
+joined_feats = join_features(sub_feats)
+print(joined_feats)
 
-print(res_feats)
-print("importance\n", importance)
-
-import autosklearn.classification
-import sklearn
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
-
-# train model(s)
-automl.fit(X_train, y_train)
-
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
-
-# first we'll create a binary label set, indicating 0 for awake and 1 for asleep
-
-e_binary_label_array = extracted_labels['1'].ravel().copy()
-e_binary_label_array[e_binary_label_array > 0] = 1
-print(np.unique(e_binary_label_array))
-print(e_binary_label_array.shape)
-
-print("Extracted Features", "\n", extracted_features)
-print("\nExtracted Labels", "\n", e_binary_label_array)
+# make training/testing dataset
+# this returns a feature array of [time - motion x - motion y - motion z - hr] and an aligned array of labels  [time - label]
+# for both the training and test set
+# split paramter will create a set of "train" subjects and "test" subjects
+# add_id paramter will include the subject id in the resulting dataframe - necessary for tsfresh feature extraction
 
 from sklearn.model_selection import train_test_split
 
-# Splitting our data into training and testing.
+def create_train_test(FULL_SET, feature_set, split=True, test_size=0.2, add_id=False):
 
-X_train, X_test, y_train, y_test = train_test_split(extracted_features, e_binary_label_array, test_size=0.25)
+    training_set_features = pd.DataFrame([])
+    training_set_true_labels = pd.DataFrame([])
+    testing_set_features = pd.DataFrame([])
+    testing_set_true_labels = pd.DataFrame([])
 
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
+    if split == False:
 
-clf = DecisionTreeClassifier(random_state=0)
+        for subject in FULL_SET:
 
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+            subject_features, subject_labels = interpolate_features(subject, feature_set)
 
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
+            subject_features, subject_labels = remove_noise(subject_features, subject_labels)
 
-# using list comprehension + enumerate() 
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [extracted_features.columns[i] for i in res]
-  
-# print result 
-print("\nThe list of features with importance: ") 
+            joined_features = join_features(subject_features)
 
-print(res_feats)
-#print("importance\n", importance)
+            if add_id == True:
+                joined_features["id"] = [subject for i in range(0, len(subject_labels))]
+                subject_labels["id"] = [subject for i in range(0, len(subject_labels))]
 
-#nested_cross_val(X_train, y_train)
+            if np.shape(training_set_features)[0] == 0:
+                training_set_features = joined_features
+                training_set_true_labels = subject_labels
+            else:
+                training_set_features = pd.concat((training_set_features, joined_features))
+                training_set_true_labels = pd.concat((training_set_true_labels, subject_labels))
 
-names, results = algorithm_comparison(X_train, y_train, X_test, y_test)
-
-plot_algo_comparison(names, results, title="Algorithm Comparison on Wake/Sleep Label Data With Extracted Features")
-
-import autosklearn.classification
-import sklearn
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
-
-# train model(s)
-automl.fit(X_train, y_train)
-
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
-
-e_three_label_array = extracted_labels['1'].ravel().copy()
-e_three_label_array[(e_three_label_array == 1) | (e_three_label_array == 2) | (e_three_label_array == 3)] = 1
-e_three_label_array[e_three_label_array == 5] = 2
-
-print(np.unique(three_label_array))
-print(three_label_array.shape)
-
-from sklearn.model_selection import train_test_split
-
-# Splitting our data into training and testing.
-
-X_train, X_test, y_train, y_test = train_test_split(extracted_features, e_three_label_array, test_size=0.25)
-
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
-
-clf = DecisionTreeClassifier(random_state=0)
-
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
-
-# using list comprehension + enumerate() 
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [extracted_features.columns[i] for i in res]
-  
-# print result 
-print("\nThe list of features with importance: ") 
-
-print(res_feats)
-#print("importance\n", importance)
-
-#nested_cross_val(X_train, y_train)
-
-names, results = algorithm_comparison(X_train, y_train, X_test, y_test)
-
-plot_algo_comparison(names, results, title="Algorithm Comparison on Wake/NREM/REM Label Data With Extracted Features")
-
-import autosklearn.classification
-import sklearn
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
-
-# train model(s)
-automl.fit(X_train, y_train)
-
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
-
-e_label_array = extracted_labels['1'].ravel()
-print(e_label_array.shape)
-np.unique(e_label_array)
-
-extracted_features = extracted_features.dropna(axis='columns')
-extracted_labels["1"].unique()
-
-print("Extracted Features", "\n", extracted_features)
-print("\nExtracted Labels", "\n", extracted_labels)
-
-from sklearn.model_selection import train_test_split
-
-# Splitting our data into training and testing.
-
-X_train, X_test, y_train, y_test = train_test_split(extracted_features, e_label_array, test_size=0.25)
-
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
-
-clf = DecisionTreeClassifier(random_state=0)
-
-scores = cross_val_score(clf, X_train, y_train, cv=5)
-print('The mean score and the 95% confidence interval of the score estimate are given by:')
-print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-
-# Training the model in a standard way allows to to view the feature importance
-# for this model alone.
-clf.fit(X_train,y_train)
-importance = (clf.feature_importances_)
-
-# using list comprehension + enumerate() 
-# index of matching element 
-res = [idx for idx, val in enumerate(importance) if val > 0] 
-res_feats = [extracted_features.columns[i] for i in res]
-  
-# print result 
-print("\nThe list of features with importance: ") 
-
-print(res_feats)
-#print("importance\n", importance)
-
-#nested_cross_val(X_train, y_train)
-
-names, results = algorithm_comparison(X_train, y_train, X_test, y_test)
-
-plot_algo_comparison(names, results, title="Algorithm Comparison on Multi-Label Data With Extracted Features")
-
-import autosklearn.classification
-import sklearn
-# configure auto-sklearn
-automl = autosklearn.classification.AutoSklearnClassifier(
-          time_left_for_this_task=120, # run auto-sklearn for at most 2min
-          per_run_time_limit=30, # spend at most 30 sec for each model training
-          )
-
-# train model(s)
-automl.fit(X_train, y_train)
-
-# evaluate
-y_hat = automl.predict(X_test)
-test_acc = sklearn.metrics.accuracy_score(y_test, y_hat)
-print("Test Accuracy score {0}".format(test_acc))
+        return training_set_features, training_set_true_labels
 
 
+    training_subjects, testing_subjects = train_test_split(FULL_SET, test_size = test_size)
+    print("training set:\n", training_subjects, "\n")
+    print("testing set:\n", testing_subjects, "\n")
+
+    # Get labels and features for training and testing sets
+    for subject in training_subjects:
+
+        subject_features, subject_labels = interpolate_features(subject, feature_set)
+
+        subject_features, subject_labels = remove_noise(subject_features, subject_labels)
+
+        joined_features = join_features(subject_features)
+
+        if np.shape(training_set_features)[0] == 0:
+            training_set_features = joined_features
+            training_set_true_labels = subject_labels
+        else:
+            training_set_features = pd.concat((training_set_features, joined_features))
+            training_set_true_labels = pd.concat((training_set_true_labels, subject_labels))
+
+    for subject in testing_subjects:
+
+        subject_features, subject_labels = interpolate_features(subject, feature_set)
+
+        subject_features, subject_labels = remove_noise(subject_features, subject_labels)
+
+        joined_features = join_features(subject_features)
+
+        if np.shape(testing_set_features)[0] == 0:
+            testing_set_features = joined_features
+            testing_set_true_labels = subject_labels
+        else:
+            testing_set_features = pd.concat((testing_set_features, joined_features))
+            testing_set_true_labels = pd.concat((testing_set_true_labels, subject_labels))
+
+    return training_set_features, training_set_true_labels, testing_set_features, testing_set_true_labels
+
+
+training_set_features, training_set_true_labels, testing_set_features, testing_set_true_labels = create_train_test(FULL_SET, feature_set, test_size=0.2)
+
+full_set_features, full_set_true_labels = create_train_test(FULL_SET, feature_set, split=False, add_id=True)
+
+full_set_features.to_csv('/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_features.csv')
+full_set_true_labels.to_csv('/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_labels.csv')
+
+
+full_set_true_labels[1].unique()
+
+print("Training Set Features", "\n", training_set_features)
+print("Training Set Features", "\n", training_set_true_labels)
+
+print("Testing Set Features", "\n", testing_set_features)
+print("Testing Set Features", "\n", testing_set_true_labels)
+
+!pip install tsfresh
+
+# make sure our feature df is all numeric before extracting features
+# it should be already but tsfresh was giving errors sometimes
+
+full_set_features2 = full_set_features.reset_index()
+full_set_features2 = full_set_features2.rename(columns={"index":"time"})
+full_set_features2 = full_set_features2.apply(pd.to_numeric)
+print(full_set_features2.head(), "\n")
+
+# Unpivot a DataFrame from wide to long format, optionally leaving identifiers set.
+
+# This function is useful to massage a DataFrame into a format where one or more 
+# columns are identifier variables (id_vars), while all other columns, considered 
+# measured variables (value_vars), are “unpivoted” to the row axis, 
+# leaving just two non-identifier columns, ‘variable’ and ‘value’.
+
+full_set_features2['combine_id'] = list(zip(full_set_features2.id, full_set_features2.time))
+full_set_features2 = full_set_features2.drop(columns="id")
+melted_features = full_set_features2.melt(id_vars = ["combine_id", "time"])
+print(melted_features, "\n")
+
+melted_features.dtypes
+
+
+full_set_true_labels = full_set_true_labels.apply(pd.to_numeric)
+#full_set_true_labels2 = full_set_true_labels2.reset_index()
+full_set_true_labels.head()
+
+full_set_true_labels.dtypes
+
+#new_labels = training_set_true_labels.reset_index(drop=True)
+new_labels = pd.Series(full_set_true_labels.loc[:,1])
+#new_labels = new_labels.reindex(np.arange(0, len(new_labels) + 1, 30))
+new_labels.index = list(zip(full_set_true_labels["id"], full_set_true_labels.index))
+print(new_labels.head(), "\n")
+new_labels.dtypes
+
+from tsfresh import extract_features
+
+
+# this takes a while ~20mins
+X = extract_features(melted_features, column_id="combine_id", column_value="value", column_sort="time")
+
+
+print(X.shape)
+
+# sort our labels on the index of time step, subject id
+
+# our original labels
+print(new_labels.head(), "\n")
+
+# create multiIndex by separating id and time
+a = pd.MultiIndex.from_tuples(new_labels.index, names=('id', 'time'))
+
+# reindex our labels using this multiIndex
+sorted_new_labels = new_labels.reindex(a)
+
+
+# sort labels according to this new multiIndex
+sorted_new_labels.sort_index(inplace=True)
+
+sorted_new_labels.to_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv')
+
+sorted_new_labels
+
+# Display Extracted Features for each time step of each subject
+print(X)
+
+X = X.dropna(axis='columns')
+# Check shape of feature
+X.shape
+
+np.where(np.isinf(X))
+
+X = X.drop(X.columns[[31]], axis=1) 
+
+np.where(np.isinf(X))
+
+# save to csv
+X.to_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_2.csv')
+
+import tsfresh
+X = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_2.csv')
+Y = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv')
+y_series = pd.Series(Y['1'])
+
+
+
+tsfresh.feature_selection.relevance.calculate_relevance_table(X, y_series, ml_task='classification').head(10)

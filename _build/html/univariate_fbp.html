@@ -1,0 +1,970 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Univariate FBProphet &#8212; CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Preprocessing" href="forecasting.html" />
+    <link rel="prev" title="Literature Review and Motivations for Forecasting Stage" href="Intro_and_Desc_of_Data.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  <img src="_static/forecasting.png" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Intro_and_Desc_of_Data.html">
+   Literature Review and Motivations for Forecasting Stage
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Univariate Forecasting with FBProphet
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Univariate FBProphet
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Multivariate Forecasting with VAR
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="forecasting.html">
+   Data Preprocessing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="forecasting.html#data-processing">
+   Data Processing
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Concluding Section
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Summary_Conclusion.html">
+   Summary and Learning Outcomes
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/univariate_fbp.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/univariate_fbp.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="univariate-fbprophet">
+<h1>Univariate FBProphet<a class="headerlink" href="#univariate-fbprophet" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">fbprophet</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+
+<span class="c1"># check prophet version</span>
+<span class="kn">import</span> <span class="nn">fbprophet</span>
+<span class="c1"># print version number</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Prophet </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fbprophet</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mounted at /content/drive
+Prophet 0.7.1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the dataset</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+<span class="c1"># load data</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv&#39;</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv&#39;</span><span class="p">)</span>
+<span class="c1"># summarize shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># show first few rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">full_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">Y</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]],</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">full_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(26417, 271)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># add subject id back in</span>
+<span class="n">full_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">Y</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">]],</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">full_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># convert time column into fbProphet-friendly datetime format</span>
+<span class="n">full_df</span> <span class="o">=</span> <span class="n">full_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">})</span>
+<span class="n">full_df</span><span class="p">[</span><span class="s2">&quot;ds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_df</span><span class="p">[</span><span class="s1">&#39;ds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">full_df</span><span class="p">[</span><span class="s1">&#39;ds&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">full_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dfs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">full_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">full_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="n">id_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">id_list</span><span class="p">)</span>
+<span class="n">id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">id_set</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fbprophet</span> <span class="kn">import</span> <span class="n">Prophet</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">subject</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">()</span>
+  <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:numexpr.utils:NumExpr defaulting to 2 threads.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="mi">46343</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:fbprophet:Disabling yearly seasonality. Run prophet with yearly_seasonality=True to override this.
+INFO:fbprophet:Disabling weekly seasonality. Run prophet with weekly_seasonality=True to override this.
+INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=True to override this.
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;fbprophet.forecaster.Prophet at 0x7f69987cb208&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">future</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">make_future_dataframe</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span><span class="s2">&quot;30S&quot;</span><span class="p">)</span>
+<span class="n">future</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ds</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>569</th>
+      <td>1970-01-01 04:51:00</td>
+    </tr>
+    <tr>
+      <th>570</th>
+      <td>1970-01-01 04:51:30</td>
+    </tr>
+    <tr>
+      <th>571</th>
+      <td>1970-01-01 04:52:00</td>
+    </tr>
+    <tr>
+      <th>572</th>
+      <td>1970-01-01 04:52:30</td>
+    </tr>
+    <tr>
+      <th>573</th>
+      <td>1970-01-01 04:53:00</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">future</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ds</th>
+      <th>trend</th>
+      <th>yhat_lower</th>
+      <th>yhat_upper</th>
+      <th>trend_lower</th>
+      <th>trend_upper</th>
+      <th>additive_terms</th>
+      <th>additive_terms_lower</th>
+      <th>additive_terms_upper</th>
+      <th>multiplicative_terms</th>
+      <th>multiplicative_terms_lower</th>
+      <th>multiplicative_terms_upper</th>
+      <th>yhat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1970-01-01 00:06:30</td>
+      <td>1.024940</td>
+      <td>-0.585054</td>
+      <td>2.441879</td>
+      <td>1.024940</td>
+      <td>1.024940</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.024940</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1970-01-01 00:07:00</td>
+      <td>1.041096</td>
+      <td>-0.387736</td>
+      <td>2.552626</td>
+      <td>1.041096</td>
+      <td>1.041096</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.041096</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1970-01-01 00:07:30</td>
+      <td>1.057251</td>
+      <td>-0.462829</td>
+      <td>2.460306</td>
+      <td>1.057251</td>
+      <td>1.057251</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.057251</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1970-01-01 00:08:00</td>
+      <td>1.073407</td>
+      <td>-0.372403</td>
+      <td>2.632245</td>
+      <td>1.073407</td>
+      <td>1.073407</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.073407</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1970-01-01 00:08:30</td>
+      <td>1.089563</td>
+      <td>-0.420982</td>
+      <td>2.540670</td>
+      <td>1.089563</td>
+      <td>1.089563</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.089563</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span><span class="p">[[</span><span class="s1">&#39;ds&#39;</span><span class="p">,</span> <span class="s1">&#39;yhat&#39;</span><span class="p">,</span> <span class="s1">&#39;yhat_lower&#39;</span><span class="p">,</span> <span class="s1">&#39;yhat_upper&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ds</th>
+      <th>yhat</th>
+      <th>yhat_lower</th>
+      <th>yhat_upper</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>544</th>
+      <td>1970-01-01 04:38:30</td>
+      <td>0.711770</td>
+      <td>-0.778800</td>
+      <td>2.141895</td>
+    </tr>
+    <tr>
+      <th>545</th>
+      <td>1970-01-01 04:39:00</td>
+      <td>0.698411</td>
+      <td>-0.908538</td>
+      <td>2.244029</td>
+    </tr>
+    <tr>
+      <th>546</th>
+      <td>1970-01-01 04:39:30</td>
+      <td>0.685053</td>
+      <td>-0.860167</td>
+      <td>2.187700</td>
+    </tr>
+    <tr>
+      <th>547</th>
+      <td>1970-01-01 04:40:00</td>
+      <td>0.671695</td>
+      <td>-0.864382</td>
+      <td>2.103134</td>
+    </tr>
+    <tr>
+      <th>548</th>
+      <td>1970-01-01 04:40:30</td>
+      <td>0.658336</td>
+      <td>-0.952764</td>
+      <td>2.189860</td>
+    </tr>
+    <tr>
+      <th>549</th>
+      <td>1970-01-01 04:41:00</td>
+      <td>0.644978</td>
+      <td>-0.772786</td>
+      <td>2.096793</td>
+    </tr>
+    <tr>
+      <th>550</th>
+      <td>1970-01-01 04:41:30</td>
+      <td>0.631620</td>
+      <td>-0.852280</td>
+      <td>2.161277</td>
+    </tr>
+    <tr>
+      <th>551</th>
+      <td>1970-01-01 04:42:00</td>
+      <td>0.618261</td>
+      <td>-0.880884</td>
+      <td>2.132853</td>
+    </tr>
+    <tr>
+      <th>552</th>
+      <td>1970-01-01 04:42:30</td>
+      <td>0.604903</td>
+      <td>-0.889690</td>
+      <td>1.922476</td>
+    </tr>
+    <tr>
+      <th>553</th>
+      <td>1970-01-01 04:43:00</td>
+      <td>0.591545</td>
+      <td>-0.923570</td>
+      <td>2.141272</td>
+    </tr>
+    <tr>
+      <th>554</th>
+      <td>1970-01-01 04:43:30</td>
+      <td>0.578186</td>
+      <td>-0.957897</td>
+      <td>2.032962</td>
+    </tr>
+    <tr>
+      <th>555</th>
+      <td>1970-01-01 04:44:00</td>
+      <td>0.564828</td>
+      <td>-0.969691</td>
+      <td>2.133874</td>
+    </tr>
+    <tr>
+      <th>556</th>
+      <td>1970-01-01 04:44:30</td>
+      <td>0.551470</td>
+      <td>-0.884277</td>
+      <td>1.999009</td>
+    </tr>
+    <tr>
+      <th>557</th>
+      <td>1970-01-01 04:45:00</td>
+      <td>0.538111</td>
+      <td>-1.051537</td>
+      <td>2.065194</td>
+    </tr>
+    <tr>
+      <th>558</th>
+      <td>1970-01-01 04:45:30</td>
+      <td>0.524753</td>
+      <td>-0.985763</td>
+      <td>1.953150</td>
+    </tr>
+    <tr>
+      <th>559</th>
+      <td>1970-01-01 04:46:00</td>
+      <td>0.511395</td>
+      <td>-1.058669</td>
+      <td>1.970706</td>
+    </tr>
+    <tr>
+      <th>560</th>
+      <td>1970-01-01 04:46:30</td>
+      <td>0.498036</td>
+      <td>-0.951079</td>
+      <td>1.978186</td>
+    </tr>
+    <tr>
+      <th>561</th>
+      <td>1970-01-01 04:47:00</td>
+      <td>0.484678</td>
+      <td>-0.989717</td>
+      <td>2.041067</td>
+    </tr>
+    <tr>
+      <th>562</th>
+      <td>1970-01-01 04:47:30</td>
+      <td>0.471320</td>
+      <td>-1.142951</td>
+      <td>1.988527</td>
+    </tr>
+    <tr>
+      <th>563</th>
+      <td>1970-01-01 04:48:00</td>
+      <td>0.457961</td>
+      <td>-0.951126</td>
+      <td>2.001411</td>
+    </tr>
+    <tr>
+      <th>564</th>
+      <td>1970-01-01 04:48:30</td>
+      <td>0.444603</td>
+      <td>-1.068095</td>
+      <td>1.930233</td>
+    </tr>
+    <tr>
+      <th>565</th>
+      <td>1970-01-01 04:49:00</td>
+      <td>0.431245</td>
+      <td>-1.170878</td>
+      <td>1.863938</td>
+    </tr>
+    <tr>
+      <th>566</th>
+      <td>1970-01-01 04:49:30</td>
+      <td>0.417886</td>
+      <td>-1.177515</td>
+      <td>1.896212</td>
+    </tr>
+    <tr>
+      <th>567</th>
+      <td>1970-01-01 04:50:00</td>
+      <td>0.404528</td>
+      <td>-1.090369</td>
+      <td>1.897466</td>
+    </tr>
+    <tr>
+      <th>568</th>
+      <td>1970-01-01 04:50:30</td>
+      <td>0.391170</td>
+      <td>-1.078283</td>
+      <td>1.882955</td>
+    </tr>
+    <tr>
+      <th>569</th>
+      <td>1970-01-01 04:51:00</td>
+      <td>0.377811</td>
+      <td>-1.174155</td>
+      <td>1.759388</td>
+    </tr>
+    <tr>
+      <th>570</th>
+      <td>1970-01-01 04:51:30</td>
+      <td>0.364453</td>
+      <td>-1.040837</td>
+      <td>1.812615</td>
+    </tr>
+    <tr>
+      <th>571</th>
+      <td>1970-01-01 04:52:00</td>
+      <td>0.351095</td>
+      <td>-1.111476</td>
+      <td>1.843437</td>
+    </tr>
+    <tr>
+      <th>572</th>
+      <td>1970-01-01 04:52:30</td>
+      <td>0.337736</td>
+      <td>-1.088930</td>
+      <td>1.747435</td>
+    </tr>
+    <tr>
+      <th>573</th>
+      <td>1970-01-01 04:53:00</td>
+      <td>0.324378</td>
+      <td>-1.195388</td>
+      <td>1.823861</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/univariate_fbp_16_0.png" src="_images/univariate_fbp_16_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">plot_components</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/univariate_fbp_17_0.png" src="_images/univariate_fbp_17_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fbprophet.diagnostics</span> <span class="kn">import</span> <span class="n">cross_validation</span>
+<span class="n">df_cv</span> <span class="o">=</span> <span class="n">cross_validation</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="s1">&#39;730 days&#39;</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="s1">&#39;180 days&#39;</span><span class="p">,</span> <span class="n">horizon</span> <span class="o">=</span> <span class="s1">&#39;365 days&#39;</span><span class="p">)</span>
+<span class="n">df_cv</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="Intro_and_Desc_of_Data.html" title="previous page">Literature Review and Motivations for Forecasting Stage</a>
+    <a class='right-next' id="next-link" href="forecasting.html" title="next page">Data Preprocessing</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By The Jupyter Book community<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

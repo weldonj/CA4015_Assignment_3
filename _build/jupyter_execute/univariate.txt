@@ -1,0 +1,70 @@
+pip install fbprophet
+
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+# check prophet version
+import fbprophet
+# print version number
+print('Prophet %s' % fbprophet.__version__)
+
+# load the dataset
+import pandas as pd
+from pandas import read_csv
+# load data
+X = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv')
+Y = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv')
+# summarize shape
+print(X.shape)
+print(Y.shape)
+# show first few rows
+print(X.head())
+print(Y.head())
+
+full_df = pd.concat([Y[["time", "1"]], X[X.columns[2:]]], axis=1)
+print(full_df.shape)
+
+# add subject id back in
+full_df = pd.concat([Y[["time", "1", "id"]], X[X.columns[2:]]], axis=1)
+full_df
+
+# convert time column into fbProphet-friendly datetime format
+full_df = full_df.rename(columns={"time": "ds", "1": "y"})
+full_df["ds"] = full_df['ds'] = pd.to_datetime(full_df['ds'], unit='s')
+full_df
+
+dfs = dict(tuple(full_df.groupby('id')))
+
+id_list = list(full_df['id'])
+id_set = set(id_list)
+id_list = list(id_set)
+
+from fbprophet import Prophet
+
+for subject, df in dfs.items():
+  model = Prophet()
+  model.fit(df)
+
+
+model = Prophet()
+model.fit(dfs[46343])
+
+
+future = model.make_future_dataframe(periods=20, freq ="30S")
+future.tail()
+
+forecast = model.predict(future)
+
+forecast.head()
+
+forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(30)
+
+
+plot1 = model.plot(forecast)
+
+plot2 = model.plot_components(forecast)
+
+from fbprophet.diagnostics import cross_validation
+df_cv = cross_validation(model, initial='730 days', period='180 days', horizon = '365 days')
+df_cv.head()
