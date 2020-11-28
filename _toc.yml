@@ -1,11 +1,11 @@
 - file: Intro_and_Desc_of_Data
   title: INTRODUCTION AND DESCRIPTION OF DATASET
 
-- part: Data Cleaning and Processing
+- part: Univariate Forecasting with FBProphet
   chapters:
-  - file: processing
+  - file: univariate_fbp
 
-- part: Forecasting
+- part: Multivariate Forecasting with VAR
   chapters:
   - file: forecasting  
 
