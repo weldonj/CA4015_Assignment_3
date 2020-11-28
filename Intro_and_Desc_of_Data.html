@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Literature Review and Motivations for Forecasting Stage &#8212; CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="univariate_fbp.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  <img src="_static/forecasting.png" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="reference internal" href="#">
+   Literature Review and Motivations for Forecasting Stage
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Concluding Section
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Summary_Conclusion.html">
+   Summary and Learning Outcomes
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/Intro_and_Desc_of_Data.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="literature-review-and-motivations-for-forecasting-stage">
+<h1>Literature Review and Motivations for Forecasting Stage<a class="headerlink" href="#literature-review-and-motivations-for-forecasting-stage" title="Permalink to this headline">¶</a></h1>
+<p><strong>Background -</strong></p>
+<p>In our previous assignment we built a model that could classify sleep stages based on a number of time series features. The next stage is to create a model that will take a look at this same sleep stage data and allow us to forecast how a subject’s sleep cycle will look in the immediate future.</p>
+<p><strong>Motivations for Building this Forecasting Model and Tracking Sleep Patterns in General-</strong></p>
+<p>The Institute of Medicine (US) Committee on Sleep Research estimates that between 50 and 70 million Americans have trouble with the duration and the quality of their sleep. They have found that the negative effects of this are even more impactful when the poor quality sleep and/or inadequate sleep duration takes place on a chronic, daily basis, rather than on occasion[1].</p>
+<p>There are a whole host of detrimental physical effects that are causally associated with poor quality sleep and sleep deprivation. Palagini et al[2] showed how sleep loss can lead to high blood pressure/hypertension. Meier-Ewert et al[3] did similar for cardiovascular risk, showing a clear risk increase with chronic sleep loss.</p>
+<p>The negative effects aren’t just physical, Strine and Chapman[4] found that poor sleep quality also has severe negative effects on mental health and wellbeing. Peterman et al[5] also showed a link between sleep disorders and increases in anxiety and depression.</p>
+<p><strong>Some Novel Uses that We have come up with for why You may want to be able to Forecast Sleep Stages</strong></p>
+<ul class="simple">
+<li><p>If someone has a tendency to sleepwalk, it may be useful to be able to have some kind of alert system that will activate before this person is likely to start. This sleepwalking happens in the non-rem sleep stages[6] and so it may be useful, for the parents of a child for example, to forecast when their child is likely to enter this stage.</p></li>
+<li><p>While battery life in these smart watches has gotten a lot better over recent years, they could of course still die during a night’s sleep. If this happened and we only had a portion of the night’s sleep data a good forecasting model may be able to fill in the rest of the night with a useful degree of accuracy so the subject can still have some idea of how the sleep went.</p></li>
+<li><p>Similarly, if something out of the ordinary happened during a given night and interupted your sleep, you may want to compare the true sleep data for the night with a forecast version that ignores where you unexpectedly woke up and instead fills in the remaining hours based on the previous undisturbed.</p></li>
+<li><p>If the model was trained on data that included all of the awake hours from the day before the sleep, it would be theoretically possible to forecast how many good quality hours sleep you may get based on when you go to sleep that night. This could help influence decisions on when you should go to bed on a given day to try to ensure you get adequate sleep duration and quality.</p></li>
+</ul>
+<p><strong>References -</strong></p>
+<p>1 - <em>Institute of Medicine (US) Committee on Sleep M, Research.
+The national academies collection: reports funded by
+National Institutes of Health. In: Colten HR, Altevogt BM, eds.
+Sleep Disorders and Sleep Deprivation: An Unmet Public Health
+Problem. Washington (DC): National Academies Press (US).
+National Academy of Sciences; 2006. doi: 10.17226/11617</em></p>
+<p>2 - <em>Palagini L, Bruno RM, Gemignani A, Baglioni C, Ghiadoni L, Riemann D.
+Sleep loss and hypertension: a systematic review.
+Curr Pharm Des. 2013;19(13):2409–19.</em></p>
+<p>3 - <em>Meier-Ewert HK, Ridker PM, Rifai N, Regan MM, Price NJ, Dinges DF, Mullington JM.
+Effect of sleep loss on C-reactive protein, an inflammatory marker of cardiovascular risk.
+J Am Coll Cardiol. 2004 Feb 18;43(4):678–83. doi: 10.1016/j.jacc.2003.07.050.</em></p>
+<p>4 - <em>Strine TW, Chapman DP. Associations of frequent sleep insufficiency
+with health-related quality of life and health behaviors. Sleep Med.
+2005 Jan;6(1):23–7. doi: 10.1016/j.sleep.2004.06.003</em></p>
+<p>5 - <em>Peterman JS, Carper MM, Kendall PC. Anxiety disorders and comorbid
+sleep problems in school-aged youth: review and future research directions.
+Child Psychiatry Hum Dev. 2015 un;46(3):376–92. doi: 10.1007/s10578-014-0478-y.</em></p>
+<p>6 - <em>Non-rapid eye movement sleep arousal disorders.
+In: Diagnostic and Statistical Manual of Mental Disorders DSM-5. 5th ed. Arlington,
+Va.: American Psychiatric Association; 2013. http://dsm.psychiatryonline.org. Accessed May 9, 2017.</em></p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='right-next' id="next-link" href="univariate_fbp.html" title="next page">&lt;no title&gt;</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By The Jupyter Book community<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
