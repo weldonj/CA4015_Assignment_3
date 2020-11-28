@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Univariate FBProphet &#8212; CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</title>
+    <title>&lt;no title&gt; &#8212; CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -95,18 +95,6 @@
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
-  Univariate Forecasting with FBProphet
- </span>
-</p>
-<ul class="current nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Univariate FBProphet
-  </a>
- </li>
-</ul>
-<p class="caption collapsible-parent">
- <span class="caption-text">
   Multivariate Forecasting with VAR
  </span>
 </p>
@@ -173,7 +161,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/univariate_fbp.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="_sources/univariate.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -198,7 +186,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/univariate_fbp.ipynb"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/univariate.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="_static/images/logo_binder.svg"
@@ -215,6 +203,15 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="simple nav section-nav flex-column">
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -222,9 +219,7 @@
         
               <div>
                 
-  <div class="section" id="univariate-fbprophet">
-<h1>Univariate FBProphet<a class="headerlink" href="#univariate-fbprophet" title="Permalink to this headline">¶</a></h1>
-<div class="cell docutils container">
+  <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">fbprophet</span>
 </pre></div>
@@ -889,7 +884,7 @@ INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=T
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/univariate_fbp_16_0.png" src="_images/univariate_fbp_16_0.png" />
+<img alt="_images/univariate_15_0.png" src="_images/univariate_15_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -899,7 +894,7 @@ INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=T
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/univariate_fbp_17_0.png" src="_images/univariate_fbp_17_0.png" />
+<img alt="_images/univariate_16_0.png" src="_images/univariate_16_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -908,7 +903,6 @@ INFO:fbprophet:Disabling daily seasonality. Run prophet with daily_seasonality=T
 <span class="n">df_cv</span> <span class="o">=</span> <span class="n">cross_validation</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="s1">&#39;730 days&#39;</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="s1">&#39;180 days&#39;</span><span class="p">,</span> <span class="n">horizon</span> <span class="o">=</span> <span class="s1">&#39;365 days&#39;</span><span class="p">)</span>
 <span class="n">df_cv</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>
