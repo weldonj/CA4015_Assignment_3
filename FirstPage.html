@@ -1,0 +1,1141 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Univariate Time Series Forecasting &#8212; CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  <img src="_static/forecasting.png" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Intro_and_Desc_of_Data.html">
+   Literature Review and Motivations for Forecasting Stage
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Concluding Section
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Summary_Conclusion.html">
+   Summary and Learning Outcomes
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/FirstPage.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/FirstPage.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#install-fbprophet-for-our-forecasting">
+   Install fbprophet for our forecasting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#import-fbprophet-datetime-pandas-timeseriessplit-numpy">
+   Import fbprophet, datetime, pandas, timeseriessplit, numpy
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#mount-our-google-drive">
+   Mount our Google drive
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#load-our-datasets-from-our-google-drive-and-take-a-look-at-the-shapes">
+   Load our datasets from our Google Drive, and take a look at the shapes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#join-our-sleep-stage-label-data-back-to-the-extracted-features-data">
+   Join our sleep stage label data back to the extracted features data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#convert-our-time-column-into-the-format-that-fbprophet-needs">
+   Convert our time column into the format that fbProphet needs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-a-dictionary-of-each-sleep-subjects-seperate-dataframes">
+   Create a dictionary of each sleep subjects’ seperate dataframes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#get-us-the-list-of-unique-subject-ids">
+   Get us the list of unique subject IDs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#split-into-5-time-series">
+   Split into 5 time series
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#function-for-splitting-our-dataframe-building-the-model-and-forecasting">
+   Function for splitting our dataframe, building the model, and forecasting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#our-first-subject">
+   Our first subject
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#thoughts-after-this-step-and-where-to-next">
+   Thoughts after this step. and where to next
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-one-large-dataframe-for-our-theoretical-subject">
+   Create one large dataframe for our theoretical subject
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="univariate-time-series-forecasting">
+<h1>Univariate Time Series Forecasting<a class="headerlink" href="#univariate-time-series-forecasting" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install-fbprophet-for-our-forecasting">
+<h2>Install fbprophet for our forecasting<a class="headerlink" href="#install-fbprophet-for-our-forecasting" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install fbprophet as it&#39;s not there by default on Colab instances</span>
+
+<span class="n">pip</span> <span class="n">install</span> <span class="n">fbprophet</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="import-fbprophet-datetime-pandas-timeseriessplit-numpy">
+<h2>Import fbprophet, datetime, pandas, timeseriessplit, numpy<a class="headerlink" href="#import-fbprophet-datetime-pandas-timeseriessplit-numpy" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the required packages and libraries</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">fbprophet</span>
+<span class="kn">from</span> <span class="nn">plotnine</span> <span class="kn">import</span> <span class="o">*</span> 
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">TimeSeriesSplit</span> 
+<span class="kn">from</span> <span class="nn">fbprophet</span> <span class="kn">import</span> <span class="n">Prophet</span> 
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="mount-our-google-drive">
+<h2>Mount our Google drive<a class="headerlink" href="#mount-our-google-drive" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import our google drive</span>
+
+<span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(&quot;/content/drive&quot;, force_remount=True).
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="load-our-datasets-from-our-google-drive-and-take-a-look-at-the-shapes">
+<h2>Load our datasets from our Google Drive, and take a look at the shapes<a class="headerlink" href="#load-our-datasets-from-our-google-drive-and-take-a-look-at-the-shapes" title="Permalink to this headline">¶</a></h2>
+<p>We had created a nice clean dataset in the previous assignment so we were able to simply now import this for the forecasting stage</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load data</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv&#39;</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv&#39;</span><span class="p">)</span>
+<span class="c1"># summarize shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># show first few rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(26417, 271)
+(26417, 3)
+   Unnamed: 0  ...  value__permutation_entropy__dimension_4__tau_1
+0       46343  ...                                            -0.0
+1       46343  ...                                            -0.0
+2       46343  ...                                            -0.0
+3       46343  ...                                            -0.0
+4       46343  ...                                            -0.0
+
+[5 rows x 271 columns]
+      id  time  1
+0  46343   390  0
+1  46343   420  0
+2  46343   450  0
+3  46343   480  0
+4  46343   510  0
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="join-our-sleep-stage-label-data-back-to-the-extracted-features-data">
+<h2>Join our sleep stage label data back to the extracted features data<a class="headerlink" href="#join-our-sleep-stage-label-data-back-to-the-extracted-features-data" title="Permalink to this headline">¶</a></h2>
+<p>For the purposes of this assignment we wanted to rejoin our extracted features data with the true sleep stage labels</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">full_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">Y</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]],</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">full_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(26417, 271)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We aksi wanted to add our subject IDs back in</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># add subject id back in</span>
+<span class="n">full_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">Y</span><span class="p">[[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">]],</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="convert-our-time-column-into-the-format-that-fbprophet-needs">
+<h2>Convert our time column into the format that fbProphet needs<a class="headerlink" href="#convert-our-time-column-into-the-format-that-fbprophet-needs" title="Permalink to this headline">¶</a></h2>
+<p>fbProphet needs the data to be in a precise format, with a ‘ds’ column for datetime and a ‘y’ column for the target column</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># convert time column into fbProphet-friendly datetime format</span>
+<span class="n">full_df</span> <span class="o">=</span> <span class="n">full_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;ds&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">})</span>
+<span class="n">full_df</span><span class="p">[</span><span class="s2">&quot;ds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_df</span><span class="p">[</span><span class="s1">&#39;ds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">full_df</span><span class="p">[</span><span class="s1">&#39;ds&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="create-a-dictionary-of-each-sleep-subjects-seperate-dataframes">
+<h2>Create a dictionary of each sleep subjects’ seperate dataframes<a class="headerlink" href="#create-a-dictionary-of-each-sleep-subjects-seperate-dataframes" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># creates a dictionary of each sleep subject&#39;s dataframe</span>
+
+<span class="n">dfs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">full_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="get-us-the-list-of-unique-subject-ids">
+<h2>Get us the list of unique subject IDs<a class="headerlink" href="#get-us-the-list-of-unique-subject-ids" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># gets us the list of unique subject IDs</span>
+
+<span class="n">id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">full_df</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="n">id_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">id_list</span><span class="p">)</span>
+<span class="n">id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">id_set</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="split-into-5-time-series">
+<h2>Split into 5 time series<a class="headerlink" href="#split-into-5-time-series" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># sets the amount of splits we want per dataframe</span>
+
+<span class="n">tscv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="function-for-splitting-our-dataframe-building-the-model-and-forecasting">
+<h2>Function for splitting our dataframe, building the model, and forecasting<a class="headerlink" href="#function-for-splitting-our-dataframe-building-the-model-and-forecasting" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pro_ds_data_gen</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">tscv</span><span class="p">,</span><span class="n">daily_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">out_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">train_i</span><span class="p">,</span><span class="n">test_i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tscv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span> <span class="c1">#For Time Series Split</span>
+        <span class="c1">#Use indexes to grab the correct data for this split</span>
+        <span class="n">train_df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_i</span><span class="p">,:]</span>
+        <span class="n">test_df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">test_i</span><span class="p">,:]</span>
+        <span class="c1">#Build our model using prophet and make predictions on the test set</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">Prophet</span><span class="p">(</span>
+            <span class="n">daily_seasonality</span><span class="o">=</span><span class="n">daily_seasonality</span><span class="p">,</span>
+            <span class="n">yearly_seasonality</span><span class="o">=</span><span class="n">yearly_seasonality</span><span class="p">,</span>
+            <span class="n">weekly_seasonality</span><span class="o">=</span><span class="n">weekly_seasonality</span>
+        <span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
+
+        <span class="c1">#Combine predictions and training into one df for plotting</span>
+        <span class="n">pred_df</span><span class="o">=</span><span class="n">predictions</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span><span class="s2">&quot;yhat&quot;</span><span class="p">]]</span>
+        <span class="n">pred_df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">test_df</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;Train&quot;</span>
+        <span class="n">pred_df</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span>
+        <span class="n">sub_df</span><span class="o">=</span><span class="n">train_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sub_df</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;Split &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sub_df</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">sub_df</span><span class="o">.</span><span class="n">yhat</span><span class="o">-</span><span class="n">sub_df</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**.</span><span class="mi">5</span> <span class="c1">#calculating rmse for the split</span>
+        <span class="n">out_df</span><span class="o">=</span><span class="n">out_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_df</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="our-first-subject">
+<h2>Our first subject<a class="headerlink" href="#our-first-subject" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Subject 46343 was chosen as the subject to try out first </span>
+
+<span class="n">dfs</span><span class="p">[</span><span class="mi">46343</span><span class="p">]</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">46343</span><span class="p">][[</span><span class="s1">&#39;ds&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]]</span>
+<span class="n">year_weak_seas_df</span><span class="o">=</span><span class="n">pro_ds_data_gen</span><span class="p">(</span><span class="n">dfs</span><span class="p">[</span><span class="mi">46343</span><span class="p">],</span><span class="n">tscv</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">ggplot</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="p">,</span><span class="n">aes</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;factor(train)&quot;</span><span class="p">))</span><span class="o">+</span>\
+ <span class="n">geom_point</span><span class="p">()</span><span class="o">+</span><span class="n">facet_grid</span><span class="p">(</span><span class="s1">&#39;split~.&#39;</span><span class="p">))</span><span class="o">+</span>\
+<span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Train/Test Splits&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Sleep Stage&quot;</span><span class="p">)</span><span class="o">+</span>\
+<span class="n">scale_x_date</span><span class="p">(</span><span class="n">date_breaks</span><span class="o">=</span><span class="s2">&quot;6 months&quot;</span><span class="p">,</span><span class="n">date_labels</span> <span class="o">=</span>  <span class="s2">&quot;%b %Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.6/dist-packages/plotnine/utils.py:1246: FutureWarning:
+
+is_categorical is deprecated and will be removed in a future version.  Use is_categorical_dtype instead
+</pre></div>
+</div>
+<img alt="_images/FirstPage_27_1.png" src="_images/FirstPage_27_1.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8729629998898)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see above that this subject looks to have a pretty standard sleep cycle for the night in question. They start from awake and gradually move through the sleep stages before returning to awake at the end</p>
+<p>We now wanted to see what the root mean square error was from our prediction and we can see below that it’s very high at over 5</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># gets us the root mean squared error between the actual y values and the predicted y values in our test splits</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="n">rmse_df</span> <span class="o">=</span> <span class="n">year_weak_seas_df</span><span class="p">[</span><span class="n">year_weak_seas_df</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span><span class="p">]</span>
+<span class="n">rms</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">rmse_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">rmse_df</span><span class="p">[</span><span class="s1">&#39;yhat&#39;</span><span class="p">],</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rms</span><span class="p">)</span>
+
+
+
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.873423473140108
+</pre></div>
+</div>
+</div>
+</div>
+<p>This can be fixed somewhat by restricting the prefictions to the true range of the sleep stages, [0-5] and also ensuring that any floating point numbers were converted to the appropriate category, eg. (3.2 -&gt; 3, 4.7 -&gt; 5)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># loops through our training/test splits and creates a single yhat column for plotting purposes</span>
+<span class="c1"># also ensures that any sleep stage predictions that have gone above 5 are set back to 5 and any that have gone below 0 are set back to 0, keeping us in our 0-5 range for the cycle</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="p">)):</span>
+  <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]):</span>
+    <span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+  <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+    <span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+  <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">year_weak_seas_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">year_weak_seas_df</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_weak_seas_df</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">year_weak_seas_df</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year_weak_seas_df</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Checking again</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># gets us the root mean squared error between the actual y values and the predicted y values in our test splits</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="n">rmse_df</span> <span class="o">=</span> <span class="n">year_weak_seas_df</span><span class="p">[</span><span class="n">year_weak_seas_df</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span><span class="p">]</span>
+<span class="n">rms</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">rmse_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">rmse_df</span><span class="p">[</span><span class="s1">&#39;yhat&#39;</span><span class="p">],</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rms</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.018061571965342
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see it has improved although still isn’t very good. If we take a look at the below, the real splits followed by the predicted splits, we can get a feel for where things are going badly</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the true splits once more, as above</span>
+
+<span class="p">(</span><span class="n">ggplot</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="p">,</span><span class="n">aes</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;factor(train)&quot;</span><span class="p">))</span><span class="o">+</span>\
+ <span class="n">geom_point</span><span class="p">()</span><span class="o">+</span><span class="n">facet_grid</span><span class="p">(</span><span class="s1">&#39;split~.&#39;</span><span class="p">))</span><span class="o">+</span>\
+<span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Train/Test Splits&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Sleep Stage&quot;</span><span class="p">)</span><span class="o">+</span>\
+<span class="n">scale_x_date</span><span class="p">(</span><span class="n">date_breaks</span><span class="o">=</span><span class="s2">&quot;6 months&quot;</span><span class="p">,</span><span class="n">date_labels</span> <span class="o">=</span>  <span class="s2">&quot;%b %Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.6/dist-packages/plotnine/utils.py:1246: FutureWarning:
+
+is_categorical is deprecated and will be removed in a future version.  Use is_categorical_dtype instead
+</pre></div>
+</div>
+<img alt="_images/FirstPage_36_1.png" src="_images/FirstPage_36_1.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8729645448014)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the predicted splits</span>
+
+<span class="p">(</span><span class="n">ggplot</span><span class="p">(</span><span class="n">year_weak_seas_df</span><span class="p">,</span><span class="n">aes</span><span class="p">(</span><span class="s2">&quot;ds&quot;</span><span class="p">,</span><span class="s2">&quot;yhat&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;factor(train)&quot;</span><span class="p">))</span><span class="o">+</span>\
+ <span class="n">geom_point</span><span class="p">()</span><span class="o">+</span><span class="n">facet_grid</span><span class="p">(</span><span class="s1">&#39;split~.&#39;</span><span class="p">))</span><span class="o">+</span>\
+<span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Train/Test Splits&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Sleep Stage&quot;</span><span class="p">)</span><span class="o">+</span>\
+<span class="n">scale_x_date</span><span class="p">(</span><span class="n">date_breaks</span><span class="o">=</span><span class="s2">&quot;6 months&quot;</span><span class="p">,</span><span class="n">date_labels</span> <span class="o">=</span>  <span class="s2">&quot;%b %Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.6/dist-packages/plotnine/utils.py:1246: FutureWarning:
+
+is_categorical is deprecated and will be removed in a future version.  Use is_categorical_dtype instead
+</pre></div>
+</div>
+<img alt="_images/FirstPage_37_1.png" src="_images/FirstPage_37_1.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ggplot: (8729629855524)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="thoughts-after-this-step-and-where-to-next">
+<h2>Thoughts after this step. and where to next<a class="headerlink" href="#thoughts-after-this-step-and-where-to-next" title="Permalink to this headline">¶</a></h2>
+<p>It’s clear from the above that all our model is doing is continuing the previous trend for each split. Our model knows nothing about how the “sleep cycle” is likely to play out and so it continues to increase or decrease the sleep stage number based purely on whether it had mvoed up or down recently. And so if we carry our prediction on long enough, the subject will either be perpetually in Sleep stage 5, or sleep stage 0 (awake) depending on whether the stage had recently increased or decreased. This really isn’t that useful at all. This makes sense when we think about how the dataset is somewhat flawed for the task that we have. We only have one cycle per person and so if we split this cycle at all, there is no way to train our model to predict what will happen in the remainig sleep cycle.</p>
+<p>At this stage we decided that we needed to move on from this approach so as not to waste any more time. We needed to rethink the data, and make some assumptions and changes that will allow for some meaningful forecast modelling.</p>
+<p>We decided that next we should retry this Univariate approach but instead of taking each of the 31 individual subjects as being unique, we could instead pretend that the first 30 individuals sleep cycles were in fact 30 previous nights of our 31st subject. Giving us a lot of sleep data for a single theoritical person, and something far more meaningful to try train our forecasting model on.</p>
+</div>
+<div class="section" id="create-one-large-dataframe-for-our-theoretical-subject">
+<h2>Create one large dataframe for our theoretical subject<a class="headerlink" href="#create-one-large-dataframe-for-our-theoretical-subject" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this will incrementally add one day to the datetime for each subject, essentially creating a 31 day range instead of the same date per subject</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">subject</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+  <span class="n">dfs</span><span class="p">[</span><span class="n">subject</span><span class="p">]</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="n">subject</span><span class="p">][[</span><span class="s1">&#39;ds&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]]</span>
+  <span class="n">dfs</span><span class="p">[</span><span class="n">subject</span><span class="p">][</span><span class="s1">&#39;ds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">dt</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">day</span><span class="o">=</span><span class="n">i</span><span class="p">))</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">joined_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This will add the first 30 subjects to a single data frame, and add our final subject to their own dataframe</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">subject</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+  <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">):</span>
+    <span class="n">joined_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">joined_df</span><span class="p">,</span> <span class="n">df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">test_df</span> <span class="o">=</span> <span class="n">df</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">joined_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ds</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1970-01-01 00:06:30</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1970-01-01 00:07:00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1970-01-01 00:07:30</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1970-01-01 00:08:00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1970-01-01 00:08:30</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>26052</th>
+      <td>1970-01-31 02:57:30</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>26053</th>
+      <td>1970-01-31 02:58:00</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>26054</th>
+      <td>1970-01-31 02:58:30</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>26055</th>
+      <td>1970-01-31 02:59:00</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>26056</th>
+      <td>1970-01-31 02:59:30</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>26057 rows × 2 columns</p>
+</div></div></div>
+</div>
+<p>This will take half of the final subject’s data and add it back to the large training dataframe, theoritcally helping our forecast</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">test_df</span><span class="p">:</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+    <span class="n">joined_df</span> <span class="o">=</span> <span class="n">joined_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_df</span> <span class="o">=</span> <span class="n">test_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">):]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Ensure the datetime column is actually in datetime format for compatibility</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_df</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">ds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Building and fitting our model</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fbprophet</span> <span class="kn">import</span> <span class="n">Prophet</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Prophet</span><span class="p">(</span><span class="n">daily_seasonality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">yearly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weekly_seasonality</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">joined_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;fbprophet.forecaster.Prophet at 0x7f08681c8198&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Making our forecasting dataframe</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">forecast</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Resetting the indexes and joining the test dataframe with the forecasting dataframe</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">joined_forecast</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">joined_forecast</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">test_df</span><span class="p">[[</span><span class="s1">&#39;ds&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">forecast</span><span class="p">[[</span><span class="s1">&#39;yhat&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s take a look at what we are left with, we can see it has exactly what we want for analysis, the timestamps</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">joined_forecast</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>ds</th>
+      <th>y</th>
+      <th>index</th>
+      <th>yhat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>26057</td>
+      <td>1970-01-31 03:00:00</td>
+      <td>2</td>
+      <td>0</td>
+      <td>2.293918</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>26058</td>
+      <td>1970-01-31 03:00:30</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2.293913</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>26059</td>
+      <td>1970-01-31 03:01:00</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2.293928</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>26060</td>
+      <td>1970-01-31 03:01:30</td>
+      <td>2</td>
+      <td>3</td>
+      <td>2.293962</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>26061</td>
+      <td>1970-01-31 03:02:00</td>
+      <td>2</td>
+      <td>4</td>
+      <td>2.294014</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>355</th>
+      <td>26412</td>
+      <td>1970-01-31 05:57:30</td>
+      <td>0</td>
+      <td>355</td>
+      <td>2.464653</td>
+    </tr>
+    <tr>
+      <th>356</th>
+      <td>26413</td>
+      <td>1970-01-31 05:58:00</td>
+      <td>0</td>
+      <td>356</td>
+      <td>2.465585</td>
+    </tr>
+    <tr>
+      <th>357</th>
+      <td>26414</td>
+      <td>1970-01-31 05:58:30</td>
+      <td>0</td>
+      <td>357</td>
+      <td>2.466533</td>
+    </tr>
+    <tr>
+      <th>358</th>
+      <td>26415</td>
+      <td>1970-01-31 05:59:00</td>
+      <td>0</td>
+      <td>358</td>
+      <td>2.467496</td>
+    </tr>
+    <tr>
+      <th>359</th>
+      <td>26416</td>
+      <td>1970-01-31 05:59:30</td>
+      <td>0</td>
+      <td>359</td>
+      <td>2.468474</td>
+    </tr>
+  </tbody>
+</table>
+<p>360 rows × 5 columns</p>
+</div></div></div>
+</div>
+<p>Once more fixing the predictions by restricting them to the true range of the sleep stages, [0-5] and also ensuring that any floating point numbers were converted to the appropriate category, eg. (3.2 -&gt; 3, 4.7 -&gt; 5)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">joined_forecast</span><span class="p">)):</span>
+  <span class="n">joined_forecast</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">joined_forecast</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">]))</span>
+  
+  <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">joined_forecast</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+    <span class="n">joined_forecast</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+  <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">joined_forecast</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">joined_forecast</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">joined_forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">joined_forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">joined_forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">joined_forecast</span><span class="p">[</span><span class="s2">&quot;yhat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">joined_forecast</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>ds</th>
+      <th>y</th>
+      <th>index</th>
+      <th>yhat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>26057</td>
+      <td>1970-01-31 03:00:00</td>
+      <td>2</td>
+      <td>0</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>26058</td>
+      <td>1970-01-31 03:00:30</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>26059</td>
+      <td>1970-01-31 03:01:00</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>26060</td>
+      <td>1970-01-31 03:01:30</td>
+      <td>2</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>26061</td>
+      <td>1970-01-31 03:02:00</td>
+      <td>2</td>
+      <td>4</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>355</th>
+      <td>26412</td>
+      <td>1970-01-31 05:57:30</td>
+      <td>0</td>
+      <td>355</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>356</th>
+      <td>26413</td>
+      <td>1970-01-31 05:58:00</td>
+      <td>0</td>
+      <td>356</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>357</th>
+      <td>26414</td>
+      <td>1970-01-31 05:58:30</td>
+      <td>0</td>
+      <td>357</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>358</th>
+      <td>26415</td>
+      <td>1970-01-31 05:59:00</td>
+      <td>0</td>
+      <td>358</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>359</th>
+      <td>26416</td>
+      <td>1970-01-31 05:59:30</td>
+      <td>0</td>
+      <td>359</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>360 rows × 5 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span>
+<span class="n">rmse_df</span> <span class="o">=</span> <span class="n">joined_forecast</span>
+<span class="n">rms</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">rmse_df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">rmse_df</span><span class="p">[</span><span class="s1">&#39;yhat&#39;</span><span class="p">],</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rms</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.6884144391587432
+</pre></div>
+</div>
+</div>
+</div>
+<p>This managed to improve our error significantly, roughly by half. We knew we could make some adjustments and try ti improve on this for univariate but with the signifcantly shorter deadline for this assignemnt and being a duo group we decided it was time to start using all of the lovely features that we had extracted in the previous assignment to see what improvements that might bring. The next section will discuss Multivariate Time Series Forecasting</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By The Jupyter Book community<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
