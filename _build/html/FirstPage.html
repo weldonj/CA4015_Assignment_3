@@ -104,6 +104,11 @@
    Univariate Time Series Forecasting
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#univariate-assuming-data-all-belongs-to-one-subject">
+   Univariate Assuming Data All Belongs To One Subject
+  </a>
+ </li>
 </ul>
 <p class="caption collapsible-parent">
  <span class="caption-text">
@@ -230,70 +235,84 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#install-fbprophet-for-our-forecasting">
-   Install fbprophet for our forecasting
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Univariate Time Series Forecasting
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#install-fbprophet-for-our-forecasting">
+     Install fbprophet for our forecasting
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#import-fbprophet-datetime-pandas-timeseriessplit-numpy">
+     Import fbprophet, datetime, pandas, timeseriessplit, numpy
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#mount-our-google-drive">
+     Mount our Google drive
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#load-our-datasets-from-our-google-drive-and-take-a-look-at-the-shapes">
+     Load our datasets from our Google Drive, and take a look at the shapes
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#join-our-sleep-stage-label-data-back-to-the-extracted-features-data">
+     Join our sleep stage label data back to the extracted features data
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#convert-our-time-column-into-the-format-that-fbprophet-needs">
+     Convert our time column into the format that fbProphet needs
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-a-dictionary-of-each-sleep-subjects-seperate-dataframes">
+     Create a dictionary of each sleep subjects’ seperate dataframes
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#get-us-the-list-of-unique-subject-ids">
+     Get us the list of unique subject IDs
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#split-into-5-time-series">
+     Split into 5 time series
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#function-for-splitting-our-dataframe-building-the-model-and-forecasting">
+     Function for splitting our dataframe, building the model, and forecasting
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#our-first-subject">
+     Our first subject
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#thoughts-after-this-step-and-where-to-next">
+     Thoughts after this step. and where to next
+    </a>
+   </li>
+  </ul>
  </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#import-fbprophet-datetime-pandas-timeseriessplit-numpy">
-   Import fbprophet, datetime, pandas, timeseriessplit, numpy
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#univariate-assuming-data-all-belongs-to-one-subject">
+   Univariate Assuming Data All Belongs To One Subject
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#mount-our-google-drive">
-   Mount our Google drive
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#load-our-datasets-from-our-google-drive-and-take-a-look-at-the-shapes">
-   Load our datasets from our Google Drive, and take a look at the shapes
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#join-our-sleep-stage-label-data-back-to-the-extracted-features-data">
-   Join our sleep stage label data back to the extracted features data
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#convert-our-time-column-into-the-format-that-fbprophet-needs">
-   Convert our time column into the format that fbProphet needs
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#create-a-dictionary-of-each-sleep-subjects-seperate-dataframes">
-   Create a dictionary of each sleep subjects’ seperate dataframes
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#get-us-the-list-of-unique-subject-ids">
-   Get us the list of unique subject IDs
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#split-into-5-time-series">
-   Split into 5 time series
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#function-for-splitting-our-dataframe-building-the-model-and-forecasting">
-   Function for splitting our dataframe, building the model, and forecasting
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#our-first-subject">
-   Our first subject
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#thoughts-after-this-step-and-where-to-next">
-   Thoughts after this step. and where to next
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#create-one-large-dataframe-for-our-theoretical-subject">
-   Create one large dataframe for our theoretical subject
-  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#create-one-large-dataframe-for-our-theoretical-subject">
+     Create one large dataframe for our theoretical subject
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -645,6 +664,9 @@ is_categorical is deprecated and will be removed in a future version.  Use is_ca
 <p>At this stage we decided that we needed to move on from this approach so as not to waste any more time. We needed to rethink the data, and make some assumptions and changes that will allow for some meaningful forecast modelling.</p>
 <p>We decided that next we should retry this Univariate approach but instead of taking each of the 31 individual subjects as being unique, we could instead pretend that the first 30 individuals sleep cycles were in fact 30 previous nights of our 31st subject. Giving us a lot of sleep data for a single theoritical person, and something far more meaningful to try train our forecasting model on.</p>
 </div>
+</div>
+<div class="section" id="univariate-assuming-data-all-belongs-to-one-subject">
+<h1>Univariate Assuming Data All Belongs To One Subject<a class="headerlink" href="#univariate-assuming-data-all-belongs-to-one-subject" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="create-one-large-dataframe-for-our-theoretical-subject">
 <h2>Create one large dataframe for our theoretical subject<a class="headerlink" href="#create-one-large-dataframe-for-our-theoretical-subject" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
