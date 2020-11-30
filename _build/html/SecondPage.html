@@ -1,0 +1,2929 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multivariate Time Series Forecasting &#8212; CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  <img src="_static/forecasting.png" class="logo" alt="logo">
+  
+  
+  <h1 class="site-logo" id="site-title">CA4015 Assignment 3 - Time Series Forecasting - Jack Boylan, John Weldon</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Intro_and_Desc_of_Data.html">
+   Literature Review and Motivations for Forecasting Stage
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Concluding Section
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Summary_Conclusion.html">
+   Summary and Learning Outcomes
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/SecondPage.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/SecondPage.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Multivariate Time Series Forecasting
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#helper-functions">
+     Helper Functions
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#plotting-function">
+       Plotting function
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#root-mean-squared-log-error">
+       Root Mean Squared Log Error
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#other-regression-metrics">
+       Other regression metrics
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setting-a-baseline">
+     Setting a Baseline
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#random-forest-regressor">
+     Random Forest Regressor
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#changing-the-loss-function-and-target-distribution">
+     Changing the Loss Function (and Target Distribution)
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-better-model-gradient-boosted-trees">
+     A Better Model - Gradient Boosted Trees
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#rest-of-night-prediction-for-individual-patients">
+   Rest of Night Prediction for Individual patients
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#compare-algorithms">
+     Compare Algorithms
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#grid-searching-hyperparameters-nested-cross-validation">
+     Grid Searching Hyperparameters (nested cross validation)
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#make-custom-scorer-for-root-mean-squared-error-rsme">
+       Make custom scorer for Root Mean Squared Error (RSME)
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#checking-best-model-performance-on-test-data">
+     Checking best model performance on test data
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#repeating-with-original-features">
+   Repeating with Original Features
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Grid Searching Hyperparameters (nested cross validation)
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Checking best model performance on test data
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#conclusion">
+   Conclusion
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="multivariate-time-series-forecasting">
+<h1>Multivariate Time Series Forecasting<a class="headerlink" href="#multivariate-time-series-forecasting" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/content/drive&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount(&quot;/content/drive&quot;, force_remount=True).
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will first load in the extracted features dataset created from our data processing notebook. This dataset contains all extracted features from the original raw windowed data, giving us over 200 unique new features.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the dataset</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_csv</span>
+<span class="c1"># load data</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv&#39;</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv&#39;</span><span class="p">)</span>
+<span class="c1"># summarize shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># show first few rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(26417, 271)
+(26417, 3)
+   Unnamed: 0  ...  value__permutation_entropy__dimension_4__tau_1
+0       46343  ...                                            -0.0
+1       46343  ...                                            -0.0
+2       46343  ...                                            -0.0
+3       46343  ...                                            -0.0
+4       46343  ...                                            -0.0
+
+[5 rows x 271 columns]
+      id  time  1
+0  46343   390  0
+1  46343   420  0
+2  46343   450  0
+3  46343   480  0
+4  46343   510  0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Combine the datasets, relabel columns as required, and sort the new dataframe by time and id; this gives us each subjects sleep cycle, one after another.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># SORT AND RE LABEL DF </span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">})</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">])</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># df[&quot;Last Period Label&quot;] = df.groupby([&quot;id&quot;])[&quot;y&quot;].shift()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>time</th>
+      <th>y</th>
+      <th>value__variance_larger_than_standard_deviation</th>
+      <th>value__has_duplicate_max</th>
+      <th>value__has_duplicate_min</th>
+      <th>value__has_duplicate</th>
+      <th>value__sum_values</th>
+      <th>value__abs_energy</th>
+      <th>value__mean_abs_change</th>
+      <th>value__mean_change</th>
+      <th>value__mean_second_derivative_central</th>
+      <th>value__median</th>
+      <th>value__mean</th>
+      <th>value__length</th>
+      <th>value__standard_deviation</th>
+      <th>value__variation_coefficient</th>
+      <th>value__variance</th>
+      <th>value__skewness</th>
+      <th>value__kurtosis</th>
+      <th>value__absolute_sum_of_changes</th>
+      <th>value__longest_strike_below_mean</th>
+      <th>value__longest_strike_above_mean</th>
+      <th>value__count_above_mean</th>
+      <th>value__count_below_mean</th>
+      <th>value__last_location_of_maximum</th>
+      <th>value__first_location_of_maximum</th>
+      <th>value__last_location_of_minimum</th>
+      <th>value__first_location_of_minimum</th>
+      <th>value__percentage_of_reoccurring_values_to_all_values</th>
+      <th>value__percentage_of_reoccurring_datapoints_to_all_datapoints</th>
+      <th>value__sum_of_reoccurring_values</th>
+      <th>value__sum_of_reoccurring_data_points</th>
+      <th>value__ratio_value_number_to_time_series_length</th>
+      <th>value__maximum</th>
+      <th>value__minimum</th>
+      <th>value__benford_correlation</th>
+      <th>value__time_reversal_asymmetry_statistic__lag_1</th>
+      <th>value__time_reversal_asymmetry_statistic__lag_2</th>
+      <th>value__time_reversal_asymmetry_statistic__lag_3</th>
+      <th>...</th>
+      <th>value__augmented_dickey_fuller__attr_"teststat"__autolag_"AIC"</th>
+      <th>value__augmented_dickey_fuller__attr_"pvalue"__autolag_"AIC"</th>
+      <th>value__augmented_dickey_fuller__attr_"usedlag"__autolag_"AIC"</th>
+      <th>value__number_crossing_m__m_0</th>
+      <th>value__number_crossing_m__m_-1</th>
+      <th>value__number_crossing_m__m_1</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_0</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_1</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_2</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_3</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_4</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_5</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_6</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_7</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_8</th>
+      <th>value__energy_ratio_by_chunks__num_segments_10__segment_focus_9</th>
+      <th>value__ratio_beyond_r_sigma__r_0.5</th>
+      <th>value__ratio_beyond_r_sigma__r_1</th>
+      <th>value__ratio_beyond_r_sigma__r_1.5</th>
+      <th>value__ratio_beyond_r_sigma__r_2</th>
+      <th>value__ratio_beyond_r_sigma__r_2.5</th>
+      <th>value__ratio_beyond_r_sigma__r_3</th>
+      <th>value__ratio_beyond_r_sigma__r_5</th>
+      <th>value__ratio_beyond_r_sigma__r_6</th>
+      <th>value__ratio_beyond_r_sigma__r_7</th>
+      <th>value__ratio_beyond_r_sigma__r_10</th>
+      <th>value__count_above__t_0</th>
+      <th>value__count_below__t_0</th>
+      <th>value__lempel_ziv_complexity__bins_2</th>
+      <th>value__lempel_ziv_complexity__bins_3</th>
+      <th>value__lempel_ziv_complexity__bins_5</th>
+      <th>value__lempel_ziv_complexity__bins_10</th>
+      <th>value__lempel_ziv_complexity__bins_100</th>
+      <th>value__fourier_entropy__bins_2</th>
+      <th>value__fourier_entropy__bins_3</th>
+      <th>value__fourier_entropy__bins_5</th>
+      <th>value__fourier_entropy__bins_10</th>
+      <th>value__fourier_entropy__bins_100</th>
+      <th>value__permutation_entropy__dimension_3__tau_1</th>
+      <th>value__permutation_entropy__dimension_4__tau_1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>46343</td>
+      <td>390</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>89.910614</td>
+      <td>8100.838344</td>
+      <td>30.793696</td>
+      <td>30.186508</td>
+      <td>22.242584</td>
+      <td>0.235069</td>
+      <td>22.477653</td>
+      <td>4.0</td>
+      <td>38.986724</td>
+      <td>1.734466</td>
+      <td>1519.964679</td>
+      <td>1.999177</td>
+      <td>3.997235</td>
+      <td>92.381088</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>90.0</td>
+      <td>-0.559524</td>
+      <td>-0.220047</td>
+      <td>-892.340880</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-0.286355</td>
+      <td>0.927415</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000039</td>
+      <td>5.885008e-05</td>
+      <td>0.000006</td>
+      <td>0.999897</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>46343</td>
+      <td>420</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>100.727615</td>
+      <td>10201.949516</td>
+      <td>34.534958</td>
+      <td>33.877009</td>
+      <td>25.002583</td>
+      <td>0.179321</td>
+      <td>25.181904</td>
+      <td>4.0</td>
+      <td>43.776239</td>
+      <td>1.738401</td>
+      <td>1916.359096</td>
+      <td>1.999278</td>
+      <td>3.997573</td>
+      <td>103.604874</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>101.0</td>
+      <td>-0.631027</td>
+      <td>0.240954</td>
+      <td>-1602.303277</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-0.318167</td>
+      <td>0.922892</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000039</td>
+      <td>4.436769e-05</td>
+      <td>0.000010</td>
+      <td>0.999907</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>46343</td>
+      <td>450</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>93.513177</td>
+      <td>8465.342833</td>
+      <td>30.757888</td>
+      <td>30.705180</td>
+      <td>22.563936</td>
+      <td>0.814358</td>
+      <td>23.378294</td>
+      <td>4.0</td>
+      <td>39.620589</td>
+      <td>1.694760</td>
+      <td>1569.791072</td>
+      <td>1.999445</td>
+      <td>3.998166</td>
+      <td>92.273666</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>92.0</td>
+      <td>-0.115540</td>
+      <td>0.033057</td>
+      <td>3279.033894</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.470899</td>
+      <td>0.983961</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000002</td>
+      <td>8.613086e-05</td>
+      <td>0.000071</td>
+      <td>0.999841</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>46343</td>
+      <td>480</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>82.258003</td>
+      <td>6724.989743</td>
+      <td>27.448583</td>
+      <td>27.448583</td>
+      <td>20.262625</td>
+      <td>0.301876</td>
+      <td>20.564501</td>
+      <td>4.0</td>
+      <td>35.473212</td>
+      <td>1.724973</td>
+      <td>1258.348745</td>
+      <td>1.998850</td>
+      <td>3.996119</td>
+      <td>82.345749</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>82.0</td>
+      <td>-0.345749</td>
+      <td>-0.085823</td>
+      <td>2986.556895</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>31.239292</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000018</td>
+      <td>1.204543e-05</td>
+      <td>0.000117</td>
+      <td>0.999853</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>-0.000000</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>46343</td>
+      <td>510</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>83.314782</td>
+      <td>6889.998766</td>
+      <td>27.771871</td>
+      <td>27.771871</td>
+      <td>20.513498</td>
+      <td>0.315197</td>
+      <td>20.828695</td>
+      <td>4.0</td>
+      <td>35.897982</td>
+      <td>1.723487</td>
+      <td>1288.665135</td>
+      <td>1.998880</td>
+      <td>3.996217</td>
+      <td>83.315613</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>83.0</td>
+      <td>-0.315613</td>
+      <td>-0.133823</td>
+      <td>3124.019917</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>62.857719</td>
+      <td>1.000000</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000014</td>
+      <td>1.110443e-05</td>
+      <td>0.000119</td>
+      <td>0.999855</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>-0.000000</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>26412</th>
+      <td>9961348</td>
+      <td>21450</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>69.689599</td>
+      <td>5041.987131</td>
+      <td>24.401304</td>
+      <td>23.796567</td>
+      <td>17.882749</td>
+      <td>-0.198250</td>
+      <td>17.422400</td>
+      <td>4.0</td>
+      <td>30.934718</td>
+      <td>1.775572</td>
+      <td>956.956774</td>
+      <td>1.999349</td>
+      <td>3.997837</td>
+      <td>73.203911</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>71.0</td>
+      <td>-0.913902</td>
+      <td>-0.428221</td>
+      <td>-2303.492292</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-2.248744</td>
+      <td>0.189032</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000030</td>
+      <td>9.164245e-09</td>
+      <td>0.000166</td>
+      <td>0.999804</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.25</td>
+      <td>0.75</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>26413</th>
+      <td>9961348</td>
+      <td>21480</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>72.572457</td>
+      <td>5403.240354</td>
+      <td>25.375102</td>
+      <td>24.586390</td>
+      <td>18.477301</td>
+      <td>-0.000912</td>
+      <td>18.143114</td>
+      <td>4.0</td>
+      <td>31.963065</td>
+      <td>1.761719</td>
+      <td>1021.637498</td>
+      <td>1.998966</td>
+      <td>3.996564</td>
+      <td>76.125304</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>73.5</td>
+      <td>-0.925720</td>
+      <td>0.023982</td>
+      <td>-2500.353156</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-2.175705</td>
+      <td>0.215181</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000012</td>
+      <td>1.225699e-05</td>
+      <td>0.000159</td>
+      <td>0.999817</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>26414</th>
+      <td>9961348</td>
+      <td>21510</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>66.068177</td>
+      <td>4489.990376</td>
+      <td>23.208578</td>
+      <td>22.421122</td>
+      <td>16.851273</td>
+      <td>-0.003502</td>
+      <td>16.517044</td>
+      <td>4.0</td>
+      <td>29.149354</td>
+      <td>1.764805</td>
+      <td>849.684847</td>
+      <td>1.998762</td>
+      <td>3.995885</td>
+      <td>69.625732</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>67.0</td>
+      <td>-0.924820</td>
+      <td>0.042677</td>
+      <td>-2075.627358</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-2.164104</td>
+      <td>0.219530</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000015</td>
+      <td>1.463745e-05</td>
+      <td>0.000190</td>
+      <td>0.999779</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>26415</th>
+      <td>9961348</td>
+      <td>21540</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>67.065674</td>
+      <td>4624.997618</td>
+      <td>23.545855</td>
+      <td>22.755109</td>
+      <td>17.100918</td>
+      <td>-0.003384</td>
+      <td>16.766419</td>
+      <td>4.0</td>
+      <td>29.582708</td>
+      <td>1.764402</td>
+      <td>875.136615</td>
+      <td>1.998788</td>
+      <td>3.995972</td>
+      <td>70.637567</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>68.0</td>
+      <td>-0.927559</td>
+      <td>0.042677</td>
+      <td>-2144.383276</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-2.152090</td>
+      <td>0.224091</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000015</td>
+      <td>1.445483e-05</td>
+      <td>0.000186</td>
+      <td>0.999784</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+    <tr>
+      <th>26416</th>
+      <td>9961348</td>
+      <td>21570</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>70.490005</td>
+      <td>5041.825087</td>
+      <td>24.340129</td>
+      <td>23.559306</td>
+      <td>18.038540</td>
+      <td>0.169579</td>
+      <td>17.622501</td>
+      <td>4.0</td>
+      <td>30.820508</td>
+      <td>1.748929</td>
+      <td>949.903722</td>
+      <td>1.998831</td>
+      <td>3.996142</td>
+      <td>73.020386</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.5</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>71.0</td>
+      <td>-0.849152</td>
+      <td>0.260913</td>
+      <td>-2140.282222</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>-3.752898</td>
+      <td>0.003428</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.000021</td>
+      <td>5.782740e-08</td>
+      <td>0.000143</td>
+      <td>0.999836</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.25</td>
+      <td>0.25</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>0.50</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.75</td>
+      <td>0.636514</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>1.098612</td>
+      <td>0.693147</td>
+      <td>-0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>26417 rows × 272 columns</p>
+</div></div></div>
+</div>
+<div class="section" id="helper-functions">
+<h2>Helper Functions<a class="headerlink" href="#helper-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="plotting-function">
+<h3>Plotting function<a class="headerlink" href="#plotting-function" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">plot_predict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+
+    <span class="n">val</span><span class="p">[</span><span class="s2">&quot;prediction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span>
+
+    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+    <span class="n">recent</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span><span class="o">*</span><span class="mf">0.95</span><span class="p">):]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">recent</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">recent</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">prediction</span><span class="p">),</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;forecast&quot;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time elapsed (sec)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Sleep Stage&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="root-mean-squared-log-error">
+<h3>Root Mean Squared Log Error<a class="headerlink" href="#root-mean-squared-log-error" title="Permalink to this headline">¶</a></h3>
+<p>We will use root mean squared log error to assess the performance of our forecasting techniques.</p>
+<p>It is the commonly used root mean squared error (RMSE) applied to the log of our target and prediction. The metric allows us to approximate the % error between our forcasting model and the ground truth, making it easier to interpret than other measures.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_log_error</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="kn">from</span> <span class="nn">lightgbm</span> <span class="kn">import</span> <span class="n">LGBMRegressor</span>
+
+<span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="n">ytrue</span><span class="p">,</span> <span class="n">ypred</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">ytrue</span><span class="p">,</span> <span class="n">ypred</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="other-regression-metrics">
+<h3>Other regression metrics<a class="headerlink" href="#other-regression-metrics" title="Permalink to this headline">¶</a></h3>
+<p>We will also use several other metrics to evaluate and compare models; these are included in the below function.</p>
+<p>In statistics, the mean squared error (MSE) of an estimator measures the average of the squares of the errors — that is, the average squared difference between the estimated values and what is estimated. The MSE is a measure of the quality of an estimator — it is always non-negative, and the smaller the MSE, the closer we are to finding the line of best fit.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sklearn.metrics</span> <span class="k">as</span> <span class="nn">metrics</span>
+
+<span class="k">def</span> <span class="nf">regression_results</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+  
+    <span class="c1"># Regression metrics</span>
+    <span class="n">explained_variance</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">explained_variance_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="n">mean_absolute_error</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> 
+
+    <span class="n">mse</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span> 
+
+    <span class="n">mean_squared_log_error</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="n">median_absolute_error</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">median_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="n">r2</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+    <span class="n">rmsle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;explained_variance: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">explained_variance</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mean_squared_log_error: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean_squared_log_error</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;root_mean_squared_log_error: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">rmsle</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;r2: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAE: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">mean_absolute_error</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">mse</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RMSE: &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">),</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="setting-a-baseline">
+<h2>Setting a Baseline<a class="headerlink" href="#setting-a-baseline" title="Permalink to this headline">¶</a></h2>
+<p>Before creating an actual forecasting model, we chose to create a baseline prediction performance. We accomplished this by splitting our data into training and testing sets, and predicting the labels of future rows based on the last label in the training data.</p>
+<p>While this is a very simple approach to the problem, it provides a good understanding of the prediction difficulty and enables us to decide if our models are performing reasonably well.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this baseline will start at the 80th percentile of our data</span>
+<span class="c1"># it will guess that the remaining future sleep stages are all the same as</span>
+<span class="c1"># the last sleep stage it has seen</span>
+
+<span class="n">mean_error</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="mi">500</span><span class="p">):</span>
+    <span class="n">timestep</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+    <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">timestep</span><span class="p">]</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">timestep</span><span class="p">]</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+    <span class="n">error</span> <span class="o">=</span> <span class="n">rmsle</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time </span><span class="si">{}</span><span class="s1">sec - Error </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timestep</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+    <span class="n">mean_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean Error = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean_error</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>26417
+Time 3390.0sec - Error 1.2899140773451414
+Time 18420.0sec - Error 0.5168000521536505
+Time 4950.0sec - Error 0.4729450060683742
+Time 19950.0sec - Error 0.5203295692068503
+Time 6720.0sec - Error 0.7506160596381407
+Time 21720.0sec - Error 1.335425180551181
+Time 8190.0sec - Error 0.7516604219224446
+Time 23190.0sec - Error 1.317578758339361
+Time 11430.0sec - Error 0.49813860717971764
+Time 26430.0sec - Error 1.2996750110580322
+Time 13080.0sec - Error 0.5012522590700376
+Mean Error = 0.8413031820484483
+</pre></div>
+</div>
+</div>
+</div>
+<p>This error rate is quite high, which indicates that machine learning models could provide some improvement.</p>
+<p>We can see that simply guessing the future sleep stage based on whatever the last sleep stage was gives us a poor performance most of the time, as sleep stages rarely stay the same. This is not a good method of prediction and we can see heavy error scores when the stage changes and the baseline has no way of knowing.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># a large proportion of our data is in NREM 2 stage,</span>
+<span class="c1"># so even guessing label 2 will get you a &quot;good&quot; accuracy score</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f332bab8fd0&gt;
+</pre></div>
+</div>
+<img alt="_images/SecondPage_16_1.png" src="_images/SecondPage_16_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="random-forest-regressor">
+<h2>Random Forest Regressor<a class="headerlink" href="#random-forest-regressor" title="Permalink to this headline">¶</a></h2>
+<p>The first model we will create is the Random Forest Regressor. Similar to the Random Forest Classifier, it is relatively easy to understand, does not require many parameters to get started, and usually performs well on most tasks.</p>
+<p>We will make use of the model here by providing training data up to the 80th percentile, and asking what the next row of sleep data for all subjects will look like.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this cell builds a random forest regressor from the first 80%</span>
+<span class="c1"># of rows from our data</span>
+<span class="c1"># it then attempts to predict the next row and calcualtes the rmsle</span>
+<span class="n">timestep</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">)][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+<span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">timestep</span><span class="p">]</span>
+<span class="n">val</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">timestep</span><span class="p">]</span>
+
+<span class="n">xtr</span><span class="p">,</span> <span class="n">xts</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">val</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ytr</span><span class="p">,</span> <span class="n">yts</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">mdl</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">mdl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtr</span><span class="p">,</span> <span class="n">ytr</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">)</span>
+
+<span class="n">error</span> <span class="o">=</span> <span class="n">rmsle</span><span class="p">(</span><span class="n">yts</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time </span><span class="si">{}</span><span class="s1">sec - Error </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timestep</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Time 3390.0sec - Error 0.22457268660805593
+</pre></div>
+</div>
+</div>
+</div>
+<p>The error rate is much better here than our baseline.</p>
+<p>However, in our use case, predicting what the next 30sec of sleep looks like is not very helpful, and should not be too difficult to do.</p>
+<p>Instead, we want to predict what the next 20 minutes will look like.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minutes_ahead</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">predict_window</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">minutes_ahead</span><span class="o">*</span><span class="mi">60</span><span class="p">))</span>
+
+<span class="n">nxts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">timestep</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">timestep</span><span class="o">+</span><span class="n">predict_window</span><span class="p">)]</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">nyts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">timestep</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">timestep</span><span class="o">+</span><span class="n">predict_window</span><span class="p">)][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">pred</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">nxts</span><span class="p">)</span>
+
+<span class="n">error</span> <span class="o">=</span> <span class="n">rmsle</span><span class="p">(</span><span class="n">nyts</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> minute prediction error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes_ahead</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test length: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nxts</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>20 minute prediction error: 0.3559460066577148
+test length: 1232
+</pre></div>
+</div>
+</div>
+</div>
+<p>This prediction window includes many rows, so it is good to see only ~10% drop off in performance, still significantly better than our baseline.</p>
+<p>Below, we can see where the model takes over and attempts to predict the next 20 minutes of sleep in the dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_predict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">nxts</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/SecondPage_22_0.png" src="_images/SecondPage_22_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="changing-the-loss-function-and-target-distribution">
+<h2>Changing the Loss Function (and Target Distribution)<a class="headerlink" href="#changing-the-loss-function-and-target-distribution" title="Permalink to this headline">¶</a></h2>
+<p>We are evaluating our results using the log of our predictions and target, but we are training using them in their original form, so we are optimizing the model using the MSE instead of the MSLE.</p>
+<p>Often we can get an improvement by using the same function to evaluate and optimize your model. Here, we can do this by simply taking the log of our target variable before passing it to be fitted.</p>
+<p>By taking the log of the target we get the additional benefit that its distribution will look more like a normal distribution. This usually helps the model learn better.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this function allows us to iteratively train our model</span>
+<span class="c1"># in steps of 1500 index, predicting &quot;x&quot; mins ahead</span>
+
+<span class="k">def</span> <span class="nf">rf_forecast</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">minutes_ahead</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">step_rate</span><span class="o">=</span><span class="mi">1500</span><span class="p">):</span>
+    <span class="n">mean_error</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predict_window</span> <span class="o">=</span> <span class="n">minutes_ahead</span><span class="o">*</span><span class="mi">60</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating </span><span class="si">{}</span><span class="s2"> models for </span><span class="si">{}</span><span class="s2"> minute prediction windows&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="mf">0.2</span><span class="o">/</span><span class="n">step_rate</span><span class="p">)),</span> <span class="n">minutes_ahead</span>
+    <span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">-</span><span class="n">minutes_ahead</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">step_rate</span><span class="p">):</span>
+        <span class="n">timestep</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+        <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">timestep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">timestep</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">timestep</span><span class="o">+</span><span class="n">predict_window</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">xtr</span><span class="p">,</span> <span class="n">xts</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">val</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ytr</span><span class="p">,</span> <span class="n">yts</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># mdl = LGBMRegressor(n_estimators=100, learning_rate=0.01)</span>
+
+        <span class="n">mdl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">ytr</span><span class="p">))</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">))</span>
+
+        <span class="n">error</span> <span class="o">=</span> <span class="n">rmsle</span><span class="p">(</span><span class="n">yts</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> minute prediction error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes_ahead</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+        <span class="n">mean_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="n">plot_predict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean Error = </span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean_error</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rf_forecast</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Creating 4 models for 20 minute prediction windows
+20 minute prediction error: 0.39254765559776456
+20 minute prediction error: 0.4974164817913185
+20 minute prediction error: 0.41325069084540883
+20 minute prediction error: 0.5847791828516147
+Mean Error = 0.47200
+</pre></div>
+</div>
+<img alt="_images/SecondPage_25_1.png" src="_images/SecondPage_25_1.png" />
+<img alt="_images/SecondPage_25_2.png" src="_images/SecondPage_25_2.png" />
+<img alt="_images/SecondPage_25_3.png" src="_images/SecondPage_25_3.png" />
+<img alt="_images/SecondPage_25_4.png" src="_images/SecondPage_25_4.png" />
+</div>
+</div>
+</div>
+<div class="section" id="a-better-model-gradient-boosted-trees">
+<h2>A Better Model - Gradient Boosted Trees<a class="headerlink" href="#a-better-model-gradient-boosted-trees" title="Permalink to this headline">¶</a></h2>
+<p><strong>Gradient boosting</strong> is a type of machine learning boosting. It relies on using ensemble techniques to combine weak classifiers - such as decision trees - into a better model.</p>
+<p>The key idea is to set the target outcomes for this next model in order to minimize the error. The target outcome for each instance depends on what effect changing that instance’s prediction affects the end result forecasting error.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># this function allows us to iteratively train our model</span>
+<span class="c1"># in steps of 1500, predicting &quot;x&quot; mins ahead</span>
+
+<span class="k">def</span> <span class="nf">gradient_boost_forecast</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">minutes_ahead</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">step_rate</span><span class="o">=</span><span class="mi">1500</span><span class="p">):</span>
+    <span class="n">mean_error</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predict_window</span> <span class="o">=</span> <span class="n">minutes_ahead</span><span class="o">*</span><span class="mi">60</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating </span><span class="si">{}</span><span class="s2"> models for </span><span class="si">{}</span><span class="s2"> minute prediction windows&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="mf">0.2</span><span class="o">/</span><span class="n">step_rate</span><span class="p">)),</span> <span class="n">minutes_ahead</span>
+    <span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">-</span><span class="n">minutes_ahead</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">step_rate</span><span class="p">):</span>
+        <span class="n">timestep</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+        <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">timestep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">timestep</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">timestep</span><span class="o">+</span><span class="n">predict_window</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">xtr</span><span class="p">,</span> <span class="n">xts</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">val</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ytr</span><span class="p">,</span> <span class="n">yts</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">LGBMRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+        <span class="n">mdl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">ytr</span><span class="p">))</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">))</span>
+
+        <span class="n">error</span> <span class="o">=</span> <span class="n">rmsle</span><span class="p">(</span><span class="n">yts</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> minute prediction error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">minutes_ahead</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+        <span class="n">mean_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="n">plot_predict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean Error = </span><span class="si">%.5f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean_error</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we can see, the error has again been reduced with the use of Gradient Boosted Trees.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">gradient_boost_forecast</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Creating 4 models for 20 minute prediction windows
+20 minute prediction error: 0.39186439357933867
+20 minute prediction error: 0.46211206759956713
+20 minute prediction error: 0.3731757404977517
+20 minute prediction error: 0.5679151372916458
+Mean Error = 0.44877
+</pre></div>
+</div>
+<img alt="_images/SecondPage_29_1.png" src="_images/SecondPage_29_1.png" />
+<img alt="_images/SecondPage_29_2.png" src="_images/SecondPage_29_2.png" />
+<img alt="_images/SecondPage_29_3.png" src="_images/SecondPage_29_3.png" />
+<img alt="_images/SecondPage_29_4.png" src="_images/SecondPage_29_4.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="rest-of-night-prediction-for-individual-patients">
+<h1>Rest of Night Prediction for Individual patients<a class="headerlink" href="#rest-of-night-prediction-for-individual-patients" title="Permalink to this headline">¶</a></h1>
+<p>In previous models, we have been predicting the future sleep stages of all patients. In real world application of this model, we would only expect to be predicting the sleep of one patient - the user.</p>
+<p>Another problem we encountered with trying to predict using the above approach, is that the training data will never show the model that a patient eventually stops sleeping. Therefore, the model will simply predict that each patient sleeps for as long as it is asked to predict.</p>
+<p>To solve this, we will set aside a number of patients as “test” subjects. The rest of the patients will be combined into a “base” as if they were one, with each sleep cycle following after another.</p>
+<p>A model will be created for each subject, using the base training data and a portion of the test subject’s sleep data. We will then attempt to predict the rest of the subject’s sleep stages for that night.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># splitting our test subjects up and keeping our large training set</span>
+
+<span class="n">full_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="n">subject_df</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">base_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">full_set</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">full_set</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">subj</span><span class="p">]</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># i days = 86,400sec * i days</span>
+
+    <span class="n">base_set</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_set</span><span class="p">,</span> <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]:</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">subj</span><span class="p">]</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">#subject_df</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This function will build a list of different models for each test subject, making use of Sklearn’s TimeSeriesSplit function to facilitate cross validation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVR</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="kn">import</span> <span class="n">MLPRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">TimeSeriesSplit</span>
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">cross_val_forecast</span><span class="p">(</span><span class="n">base_set</span><span class="p">,</span> <span class="n">new_df</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Linear Regression&#39;</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">()))</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;KNN Regressor&#39;</span><span class="p">,</span> <span class="n">KNeighborsRegressor</span><span class="p">()))</span> 
+    <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Random Forest Regressor&#39;</span><span class="p">,</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)))</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Support Vector Regression&#39;</span><span class="p">,</span> <span class="n">SVR</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)))</span> <span class="c1"># kernel = linear</span>
+    <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;Gradient Boosted Trees&quot;</span><span class="p">,</span> <span class="n">LGBMRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)))</span>
+    <span class="c1"># models.append((&#39;NN&#39;, MLPRegressor(solver = &#39;lbfgs&#39;, max_iter=10000)))  #neural network</span>
+    
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating </span><span class="si">{}</span><span class="s2"> models for cross validation&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)))</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1"># loop through each model</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+
+        <span class="n">cv_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tscv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">n_splits</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># loop through each split</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">train_i</span><span class="p">,</span> <span class="n">val_i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tscv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">new_df</span><span class="p">)):</span>
+            <span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_set</span><span class="p">,</span> <span class="n">new_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_i</span><span class="p">,</span> <span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">new_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">val_i</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;length of training data: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;length of validation data: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+
+            <span class="n">xtr</span><span class="p">,</span> <span class="n">xts</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">label</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">val</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">label</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ytr</span><span class="p">,</span> <span class="n">yts</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xtr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">ytr</span><span class="p">))</span>
+
+            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xts</span><span class="p">))</span>
+
+            <span class="n">error</span> <span class="o">=</span> <span class="n">rmsle</span><span class="p">(</span><span class="n">yts</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set prediction error (rmsle): </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+
+            <span class="n">cv_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> Mean error: </span><span class="si">{}</span><span class="se">\t</span><span class="s2">95</span><span class="si">% c</span><span class="s2">onf interval: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cv_results</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">cv_results</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time elapsed </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv_results</span><span class="p">)</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">names</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/content/drive/My Drive/CA4015/sleep_classify/subject_results.pkl&quot;</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">subject_results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">subject_df</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Cross Validating models for subject </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sub</span><span class="p">))</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">cross_val_forecast</span><span class="p">(</span><span class="n">base_set</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+        <span class="n">subject_results</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">results</span><span class="p">,</span> <span class="n">names</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">subject_results</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">subject_results</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cross Validating models for subject 9961348
+
+Creating 5 models for cross validation
+Linear Regression :
+length of training data: 25817
+length of validation data: 120
+Test set prediction error (rmsle): 0.30529532463421594
+
+length of training data: 25937
+length of validation data: 120
+Test set prediction error (rmsle): 0.38245215383755626
+
+length of training data: 26057
+length of validation data: 120
+Test set prediction error (rmsle): 0.3698779457522479
+
+length of training data: 26177
+length of validation data: 120
+Test set prediction error (rmsle): 0.44820671332337114
+
+length of training data: 26297
+length of validation data: 120
+Test set prediction error (rmsle): 0.4909741526896178
+
+Linear Regression Mean error: 0.3993612580474018	95% conf interval: 0.1289414884474641
+Time elapsed 2.340212821960449
+
+KNN Regressor :
+length of training data: 25817
+length of validation data: 120
+Test set prediction error (rmsle): 1.174837230506229
+
+length of training data: 25937
+length of validation data: 120
+Test set prediction error (rmsle): 0.4808876800375572
+
+length of training data: 26057
+length of validation data: 120
+Test set prediction error (rmsle): 0.43126645680029424
+
+length of training data: 26177
+length of validation data: 120
+Test set prediction error (rmsle): 0.6047333793353236
+
+length of training data: 26297
+length of validation data: 120
+Test set prediction error (rmsle): 0.5980334129424799
+
+KNN Regressor Mean error: 0.6579516319243768	95% conf interval: 0.5339145317930414
+Time elapsed 8.380976676940918
+
+Random Forest Regressor :
+length of training data: 25817
+length of validation data: 120
+Test set prediction error (rmsle): 0.9055220598560613
+
+length of training data: 25937
+length of validation data: 120
+Test set prediction error (rmsle): 0.5827213870470361
+
+length of training data: 26057
+length of validation data: 120
+Test set prediction error (rmsle): 0.7108438008157614
+
+length of training data: 26177
+length of validation data: 120
+Test set prediction error (rmsle): 0.5153047495778121
+
+length of training data: 26297
+length of validation data: 120
+Test set prediction error (rmsle): 0.7012046083450019
+
+Random Forest Regressor Mean error: 0.6831193211283345	95% conf interval: 0.26653356737749867
+Time elapsed 2269.5846099853516
+
+Support Vector Regression :
+length of training data: 25817
+length of validation data: 120
+Test set prediction error (rmsle): 0.31272161573283325
+
+length of training data: 25937
+length of validation data: 120
+Test set prediction error (rmsle): 0.432798522290438
+
+length of training data: 26057
+length of validation data: 120
+Test set prediction error (rmsle): 0.38126417603483315
+
+length of training data: 26177
+length of validation data: 120
+Test set prediction error (rmsle): 0.4502271068534403
+
+length of training data: 26297
+length of validation data: 120
+Test set prediction error (rmsle): 0.4835971876901917
+
+Support Vector Regression Mean error: 0.4121217217203473	95% conf interval: 0.11940137985676935
+Time elapsed 6731.585113763809
+
+Gradient Boosted Trees :
+length of training data: 25817
+length of validation data: 120
+Test set prediction error (rmsle): 0.4342553887048057
+
+length of training data: 25937
+length of validation data: 120
+Test set prediction error (rmsle): 0.5957422772238473
+
+length of training data: 26057
+length of validation data: 120
+Test set prediction error (rmsle): 0.455661496510843
+
+length of training data: 26177
+length of validation data: 120
+Test set prediction error (rmsle): 0.42750131235924077
+
+length of training data: 26297
+length of validation data: 120
+Test set prediction error (rmsle): 0.5657512390923243
+
+Gradient Boosted Trees Mean error: 0.4957823427782122	95% conf interval: 0.14126622368741393
+Time elapsed 6750.824312925339
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="compare-algorithms">
+<h2>Compare Algorithms<a class="headerlink" href="#compare-algorithms" title="Permalink to this headline">¶</a></h2>
+<p>We can now compare the performance between different models for each subject. <strong>The lower the score on this graph, the better that model has performed.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare Algorithms</span>
+<span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]:</span>
+
+    <span class="n">results</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">subject_results</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">subject_results</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Algorithm Comparison for subject </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sub</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Algorithm&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Log Error rate&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/SecondPage_36_0.png" src="_images/SecondPage_36_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="grid-searching-hyperparameters-nested-cross-validation">
+<h2>Grid Searching Hyperparameters (nested cross validation)<a class="headerlink" href="#grid-searching-hyperparameters-nested-cross-validation" title="Permalink to this headline">¶</a></h2>
+<p>We would like to take one of our highest performing model - Support Vector Regressor - and use Nested Cross Validation to find the best hyperparamters for it. However, in the interest of time we must choose a model which is faster to train, so we will substitute in Random Forest Regressor here instead.</p>
+<p>It is important to leave out a test set at this stage, so we can evaluate this “best” model and ensure it has not overfit to test data.</p>
+<div class="section" id="make-custom-scorer-for-root-mean-squared-error-rsme">
+<h3>Make custom scorer for Root Mean Squared Error (RSME)<a class="headerlink" href="#make-custom-scorer-for-root-mean-squared-error-rsme" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">make_scorer</span>
+
+<span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">predict</span><span class="p">):</span>
+
+    <span class="n">predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">predict</span><span class="p">)</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">predict</span> <span class="o">-</span> <span class="n">actual</span>
+
+    <span class="n">square_distance</span> <span class="o">=</span> <span class="n">distance</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="n">mean_square_distance</span> <span class="o">=</span> <span class="n">square_distance</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_square_distance</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">score</span>
+    
+<span class="n">rmse_score</span> <span class="o">=</span> <span class="n">make_scorer</span><span class="p">(</span><span class="n">rmse</span><span class="p">,</span> <span class="n">greater_is_better</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># find best params for subject</span>
+
+<span class="n">new_df</span> <span class="o">=</span> <span class="n">subject_df</span><span class="p">[</span><span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finding best params for subject </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">X_full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_set</span><span class="p">,</span> <span class="n">new_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X_full</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">)]</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">X_full</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">):]</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">X_full</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">)][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">X_full</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">):][</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">()</span>
+
+<span class="n">param_search</span> <span class="o">=</span> <span class="p">{</span> 
+    <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+    <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="s1">&#39;sqrt&#39;</span><span class="p">,</span> <span class="s1">&#39;log2&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;max_depth&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">15</span><span class="p">)]</span>
+    <span class="p">}</span>
+
+<span class="c1"># model = SVR()</span>
+
+<span class="c1"># param_search = { </span>
+<span class="c1">#     &#39;kernel&#39;: [&quot;linear&quot;, &quot;poly&quot;, &quot;rbf&quot;, &quot;sigmoid&quot;],</span>
+<span class="c1">#     &#39;degree&#39;: [2, 5, 10],</span>
+<span class="c1">#     &#39;gamma&#39;: [&quot;scale&quot;, &quot;auto&quot;],</span>
+<span class="c1">#     &#39;C&#39; : [i for i in range(1,5)]</span>
+<span class="c1">#     }</span>
+
+<span class="n">tscv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">gsearch</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">tscv</span><span class="p">,</span>
+                       <span class="n">param_grid</span><span class="o">=</span><span class="n">param_search</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="n">rmse_score</span><span class="p">)</span>
+
+<span class="n">gsearch</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Elapsed time: </span><span class="si">{}</span><span class="s2"> sec&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+<span class="n">best_score</span> <span class="o">=</span> <span class="n">gsearch</span><span class="o">.</span><span class="n">best_score_</span>
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">gsearch</span><span class="o">.</span><span class="n">best_estimator_</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding best params for subject 9961348
+Elapsed time: 5848.673972129822 sec
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="checking-best-model-performance-on-test-data">
+<h2>Checking best model performance on test data<a class="headerlink" href="#checking-best-model-performance-on-test-data" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">regression_results</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>explained_variance:  -0.0187
+mean_squared_log_error:  0.2538
+root_mean_squared_log_error:  0.5038
+r2:  -0.0285
+MAE:  1.2407
+MSE:  2.309
+RMSE:  1.5195
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="repeating-with-original-features">
+<h1>Repeating with Original Features<a class="headerlink" href="#repeating-with-original-features" title="Permalink to this headline">¶</a></h1>
+<p>In our classification task, we found that use of the original windowed features provided classifiers that performed almost as well as models trained on extracted features. We will do the same here, and examine the performance of forecasting models using the original features.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the dataset</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_features.csv&#39;</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_labels.csv&#39;</span><span class="p">)</span>
+<span class="c1"># summarize shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># show first few rows</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(26417, 6)
+(26417, 3)
+   Unnamed: 0         x         y         z    hr       id
+0       870.0 -0.612717 -0.086441 -0.774131  74.5  8692923
+1       900.0 -0.608009 -0.078117 -0.779465  66.5  8692923
+2       930.0 -0.608291 -0.074685 -0.776802  68.0  8692923
+3       960.0 -0.604043 -0.074944 -0.782837  71.0  8692923
+4       990.0 -0.607269 -0.070290 -0.782433  68.0  8692923
+     0  1       id
+0  870  0  8692923
+1  900  0  8692923
+2  930  0  8692923
+3  960  0  8692923
+4  990  0  8692923
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># SORT AND RE LABEL DF </span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">})</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">])</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>time</th>
+      <th>label</th>
+      <th>id</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>hr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>390</td>
+      <td>0</td>
+      <td>46343</td>
+      <td>-0.559524</td>
+      <td>0.690460</td>
+      <td>-0.220322</td>
+      <td>90.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>420</td>
+      <td>0</td>
+      <td>46343</td>
+      <td>-0.631027</td>
+      <td>0.672783</td>
+      <td>-0.314141</td>
+      <td>101.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>450</td>
+      <td>0</td>
+      <td>46343</td>
+      <td>-0.115540</td>
+      <td>0.853890</td>
+      <td>0.774827</td>
+      <td>92.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>480</td>
+      <td>0</td>
+      <td>46343</td>
+      <td>-0.345749</td>
+      <td>-0.284614</td>
+      <td>0.888367</td>
+      <td>82.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>510</td>
+      <td>0</td>
+      <td>46343</td>
+      <td>-0.315613</td>
+      <td>-0.276604</td>
+      <td>0.906998</td>
+      <td>83.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>26412</th>
+      <td>21450</td>
+      <td>0</td>
+      <td>9961348</td>
+      <td>-0.389702</td>
+      <td>-0.006797</td>
+      <td>-0.913902</td>
+      <td>71.0</td>
+    </tr>
+    <tr>
+      <th>26413</th>
+      <td>21480</td>
+      <td>0</td>
+      <td>9961348</td>
+      <td>-0.259171</td>
+      <td>0.257347</td>
+      <td>-0.925720</td>
+      <td>73.5</td>
+    </tr>
+    <tr>
+      <th>26414</th>
+      <td>21510</td>
+      <td>0</td>
+      <td>9961348</td>
+      <td>-0.263367</td>
+      <td>0.256363</td>
+      <td>-0.924820</td>
+      <td>67.0</td>
+    </tr>
+    <tr>
+      <th>26415</th>
+      <td>21540</td>
+      <td>0</td>
+      <td>9961348</td>
+      <td>-0.265327</td>
+      <td>0.258561</td>
+      <td>-0.927559</td>
+      <td>68.0</td>
+    </tr>
+    <tr>
+      <th>26416</th>
+      <td>21570</td>
+      <td>0</td>
+      <td>9961348</td>
+      <td>0.322082</td>
+      <td>0.017075</td>
+      <td>-0.849152</td>
+      <td>71.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>26417 rows × 7 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># splitting our test subjects up and keeping our large training set</span>
+
+<span class="n">full_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="n">subject_df</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">base_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">full_set</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">full_set</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">]):</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">subj</span><span class="p">]</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># i days = 86,400sec * i days</span>
+
+    <span class="n">base_set</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_set</span><span class="p">,</span> <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]:</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">subj</span><span class="p">]</span>
+    <span class="n">subject_df</span><span class="p">[</span><span class="n">subj</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/content/drive/My Drive/CA4015/sleep_classify/raw_subject_results.pkl&quot;</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+
+    <span class="n">subject_results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]:</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">subject_df</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Cross Validating models for subject </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sub</span><span class="p">))</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">cross_val_forecast</span><span class="p">(</span><span class="n">base_set</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+        <span class="n">subject_results</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">results</span><span class="p">,</span> <span class="n">names</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">subject_results</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">subject_results</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cross Validating models for subject 9106476
+
+Creating 5 models for cross validation
+Linear Regression :
+length of training data: 24035
+length of validation data: 160
+Test set prediction error (rmsle): 0.2986088784240038
+
+length of training data: 24195
+length of validation data: 160
+Test set prediction error (rmsle): 0.3470357173578335
+
+length of training data: 24355
+length of validation data: 160
+Test set prediction error (rmsle): 0.14312694528559142
+
+length of training data: 24515
+length of validation data: 160
+Test set prediction error (rmsle): 0.323786476610393
+
+length of training data: 24675
+length of validation data: 160
+Test set prediction error (rmsle): 0.8271836434229798
+
+Linear Regression Mean error: 0.3879483322201603	95% conf interval: 0.4618547770741456
+Time elapsed 0.07478499412536621
+
+KNN Regressor :
+length of training data: 24035
+length of validation data: 160
+Test set prediction error (rmsle): 0.28763669910372064
+
+length of training data: 24195
+length of validation data: 160
+Test set prediction error (rmsle): 0.31852435276292873
+
+length of training data: 24355
+length of validation data: 160
+Test set prediction error (rmsle): 0.16511015958760972
+
+length of training data: 24515
+length of validation data: 160
+Test set prediction error (rmsle): 0.3496397906442043
+
+length of training data: 24675
+length of validation data: 160
+Test set prediction error (rmsle): 0.7731853845097721
+
+KNN Regressor Mean error: 0.3788192773216471	95% conf interval: 0.413760700349509
+Time elapsed 0.41782474517822266
+
+Random Forest Regressor :
+length of training data: 24035
+length of validation data: 160
+Test set prediction error (rmsle): 0.35426000170000826
+
+length of training data: 24195
+length of validation data: 160
+Test set prediction error (rmsle): 0.6649168999435067
+
+length of training data: 24355
+length of validation data: 160
+Test set prediction error (rmsle): 0.3185853335076789
+
+length of training data: 24515
+length of validation data: 160
+Test set prediction error (rmsle): 0.3669479075386916
+
+length of training data: 24675
+length of validation data: 160
+Test set prediction error (rmsle): 0.8524054460562986
+
+Random Forest Regressor Mean error: 0.5114231177492368	95% conf interval: 0.42198486402513063
+Time elapsed 95.92176103591919
+
+Support Vector Regression :
+length of training data: 24035
+length of validation data: 160
+Test set prediction error (rmsle): 0.3080768913691875
+
+length of training data: 24195
+length of validation data: 160
+Test set prediction error (rmsle): 0.335290958847636
+
+length of training data: 24355
+length of validation data: 160
+Test set prediction error (rmsle): 0.1531428727431864
+
+length of training data: 24515
+length of validation data: 160
+Test set prediction error (rmsle): 0.3168224572880286
+
+length of training data: 24675
+length of validation data: 160
+Test set prediction error (rmsle): 0.8474443015511591
+
+Support Vector Regression Mean error: 0.39215549635983954	95% conf interval: 0.47361822988571817
+Time elapsed 640.4945650100708
+
+Gradient Boosted Trees :
+length of training data: 24035
+length of validation data: 160
+Test set prediction error (rmsle): 0.29415817633364316
+
+length of training data: 24195
+length of validation data: 160
+Test set prediction error (rmsle): 0.368036874985981
+
+length of training data: 24355
+length of validation data: 160
+Test set prediction error (rmsle): 0.1348945432224601
+
+length of training data: 24515
+length of validation data: 160
+Test set prediction error (rmsle): 0.31137339660619523
+
+length of training data: 24675
+length of validation data: 160
+Test set prediction error (rmsle): 0.8465041743949949
+
+Gradient Boosted Trees Mean error: 0.39099343310865486	95% conf interval: 0.4810988235748223
+Time elapsed 641.863664150238
+
+
+Cross Validating models for subject 9618981
+
+Creating 5 models for cross validation
+Linear Regression :
+length of training data: 24021
+length of validation data: 143
+Test set prediction error (rmsle): 0.566953094025772
+
+length of training data: 24164
+length of validation data: 143
+Test set prediction error (rmsle): 0.30932559504108015
+
+length of training data: 24307
+length of validation data: 143
+Test set prediction error (rmsle): 0.7118994157656157
+
+length of training data: 24450
+length of validation data: 143
+Test set prediction error (rmsle): 0.47589112180777965
+
+length of training data: 24593
+length of validation data: 143
+Test set prediction error (rmsle): 0.5647773165953656
+
+Linear Regression Mean error: 0.5257693086471226	95% conf interval: 0.2641179438358575
+Time elapsed 0.07148027420043945
+
+KNN Regressor :
+length of training data: 24021
+length of validation data: 143
+Test set prediction error (rmsle): 0.7175338422217294
+
+length of training data: 24164
+length of validation data: 143
+Test set prediction error (rmsle): 0.6840395304174852
+
+length of training data: 24307
+length of validation data: 143
+Test set prediction error (rmsle): 0.6666333237565907
+
+length of training data: 24450
+length of validation data: 143
+Test set prediction error (rmsle): 0.5498559664683773
+
+length of training data: 24593
+length of validation data: 143
+Test set prediction error (rmsle): 0.3962392109348482
+
+KNN Regressor Mean error: 0.6028603747598061	95% conf interval: 0.23547198748978282
+Time elapsed 0.4215583801269531
+
+Random Forest Regressor :
+length of training data: 24021
+length of validation data: 143
+Test set prediction error (rmsle): 0.8239139264143472
+
+length of training data: 24164
+length of validation data: 143
+Test set prediction error (rmsle): 0.3172150107644997
+
+length of training data: 24307
+length of validation data: 143
+Test set prediction error (rmsle): 0.5638200739875036
+
+length of training data: 24450
+length of validation data: 143
+Test set prediction error (rmsle): 0.6722565174253737
+
+length of training data: 24593
+length of validation data: 143
+Test set prediction error (rmsle): 0.18876169547234659
+
+Random Forest Regressor Mean error: 0.5131934448128141	95% conf interval: 0.4630981243143825
+Time elapsed 99.03598499298096
+
+Support Vector Regression :
+length of training data: 24021
+length of validation data: 143
+Test set prediction error (rmsle): 0.558749975588851
+
+length of training data: 24164
+length of validation data: 143
+Test set prediction error (rmsle): 0.30249580112395624
+
+length of training data: 24307
+length of validation data: 143
+Test set prediction error (rmsle): 0.7379484557478483
+
+length of training data: 24450
+length of validation data: 143
+Test set prediction error (rmsle): 0.49286074131838514
+
+length of training data: 24593
+length of validation data: 143
+Test set prediction error (rmsle): 0.5329300297045354
+
+Support Vector Regression Mean error: 0.5249970006967152	95% conf interval: 0.278697027540447
+Time elapsed 545.7251272201538
+
+Gradient Boosted Trees :
+length of training data: 24021
+length of validation data: 143
+Test set prediction error (rmsle): 0.57841968531683
+
+length of training data: 24164
+length of validation data: 143
+Test set prediction error (rmsle): 0.279912582666459
+
+length of training data: 24307
+length of validation data: 143
+Test set prediction error (rmsle): 0.7012370554247785
+
+length of training data: 24450
+length of validation data: 143
+Test set prediction error (rmsle): 0.47081967217621096
+
+length of training data: 24593
+length of validation data: 143
+Test set prediction error (rmsle): 0.7009526435793647
+
+Gradient Boosted Trees Mean error: 0.5462683278327286	95% conf interval: 0.3170036422264312
+Time elapsed 547.1112270355225
+
+
+Cross Validating models for subject 9961348
+
+Creating 5 models for cross validation
+Linear Regression :
+length of training data: 23994
+length of validation data: 120
+Test set prediction error (rmsle): 0.3099807502146777
+
+length of training data: 24114
+length of validation data: 120
+Test set prediction error (rmsle): 0.4390251102565285
+
+length of training data: 24234
+length of validation data: 120
+Test set prediction error (rmsle): 0.38675626594275975
+
+length of training data: 24354
+length of validation data: 120
+Test set prediction error (rmsle): 0.4596872789278346
+
+length of training data: 24474
+length of validation data: 120
+Test set prediction error (rmsle): 0.4952341102965254
+
+Linear Regression Mean error: 0.4181367031276652	95% conf interval: 0.12896271734823195
+Time elapsed 0.07193207740783691
+
+KNN Regressor :
+length of training data: 23994
+length of validation data: 120
+Test set prediction error (rmsle): 1.174837230506229
+
+length of training data: 24114
+length of validation data: 120
+Test set prediction error (rmsle): 0.6161714069733023
+
+length of training data: 24234
+length of validation data: 120
+Test set prediction error (rmsle): 0.43293430887703355
+
+length of training data: 24354
+length of validation data: 120
+Test set prediction error (rmsle): 0.6047333793353236
+
+length of training data: 24474
+length of validation data: 120
+Test set prediction error (rmsle): 0.7009135264023421
+
+KNN Regressor Mean error: 0.7059179704188461	95% conf interval: 0.5001784989642097
+Time elapsed 0.4116549491882324
+
+Random Forest Regressor :
+length of training data: 23994
+length of validation data: 120
+Test set prediction error (rmsle): 1.0438044322525382
+
+length of training data: 24114
+length of validation data: 120
+Test set prediction error (rmsle): 0.45614746560842095
+
+length of training data: 24234
+length of validation data: 120
+Test set prediction error (rmsle): 0.558334617286752
+
+length of training data: 24354
+length of validation data: 120
+Test set prediction error (rmsle): 0.5214030025097364
+
+length of training data: 24474
+length of validation data: 120
+Test set prediction error (rmsle): 0.5483589416317466
+
+Random Forest Regressor Mean error: 0.6256096918578389	95% conf interval: 0.42422346487966006
+Time elapsed 98.86501026153564
+
+Support Vector Regression :
+length of training data: 23994
+length of validation data: 120
+Test set prediction error (rmsle): 0.31428002955685136
+
+length of training data: 24114
+length of validation data: 120
+Test set prediction error (rmsle): 0.43043445729597574
+
+length of training data: 24234
+length of validation data: 120
+Test set prediction error (rmsle): 0.3783483565613133
+
+length of training data: 24354
+length of validation data: 120
+Test set prediction error (rmsle): 0.44821211149784734
+
+length of training data: 24474
+length of validation data: 120
+Test set prediction error (rmsle): 0.48360792565359845
+
+Support Vector Regression Mean error: 0.4109765761131172	95% conf interval: 0.11817014851006696
+Time elapsed 582.2257144451141
+
+Gradient Boosted Trees :
+length of training data: 23994
+length of validation data: 120
+Test set prediction error (rmsle): 0.6361833871299699
+
+length of training data: 24114
+length of validation data: 120
+Test set prediction error (rmsle): 0.49187980478062143
+
+length of training data: 24234
+length of validation data: 120
+Test set prediction error (rmsle): 0.39337584808355186
+
+length of training data: 24354
+length of validation data: 120
+Test set prediction error (rmsle): 0.439378751555408
+
+length of training data: 24474
+length of validation data: 120
+Test set prediction error (rmsle): 0.47063471184539923
+
+Gradient Boosted Trees Mean error: 0.4862905006789901	95% conf interval: 0.16389769083355313
+Time elapsed 583.5913987159729
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see that the beginning and end portions of sleep cycles are again particularly difficult to predict for all algorithms.</p>
+<p>Below we can plot each model’s performance for each subject to compare which may be suitable for further examinaton.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare Algorithms</span>
+<span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]:</span>
+
+    <span class="n">results</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">subject_results</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">subject_results</span><span class="p">[</span><span class="n">sub</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Algorithm Comparison for subject </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sub</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Algorithm&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Log Error rate&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/SecondPage_49_0.png" src="_images/SecondPage_49_0.png" />
+<img alt="_images/SecondPage_49_1.png" src="_images/SecondPage_49_1.png" />
+<img alt="_images/SecondPage_49_2.png" src="_images/SecondPage_49_2.png" />
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Grid Searching Hyperparameters (nested cross validation)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>We will take one of our reasonably well-performing Gradient Boosted Trees - as shown above - and use Nested Cross Validation to find the best hyperparamters, with regards to the final test subject. However, in the interest pf time we must choose a model which is faster to train, so we will substitute in K Neighbors Regressor here instead.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># find best params for subject</span>
+
+<span class="n">new_df</span> <span class="o">=</span> <span class="n">subject_df</span><span class="p">[</span><span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finding best params for subject </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">full_set</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">X_full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_set</span><span class="p">,</span> <span class="n">new_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X_full</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">)]</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">X_full</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">):]</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">X_full</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">)][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">X_full</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span><span class="o">*</span><span class="mf">0.8</span><span class="p">):][</span><span class="s2">&quot;label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">KNeighborsRegressor</span><span class="p">()</span>
+
+<span class="n">param_search</span> <span class="o">=</span> <span class="p">{</span> 
+    <span class="s1">&#39;n_neighbors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="s1">&#39;algorithm&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="s1">&#39;ball_tree&#39;</span><span class="p">,</span> <span class="s1">&#39;brute&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;p&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="p">}</span>
+
+
+<span class="c1"># model = LGBMRegressor()</span>
+
+<span class="c1"># param_search = { </span>
+<span class="c1">#     &#39;boosting_type&#39;: [&quot;gbdt&quot;, &quot;dart&quot;, &quot;goss&quot;, &quot;rf&quot;],</span>
+<span class="c1">#     &#39;n_estimators&#39;: [20, 50, 100],</span>
+<span class="c1">#     &#39;learning_rate&#39;: [0.01, 0.05, 0.1, 0.3, 0.6],</span>
+<span class="c1">#     &#39;max_depth&#39; : [i for i in range(0,10)]</span>
+<span class="c1">#     }</span>
+
+<span class="n">tscv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">gsearch</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">tscv</span><span class="p">,</span>
+                       <span class="n">param_grid</span><span class="o">=</span><span class="n">param_search</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="n">rmse_score</span><span class="p">)</span>
+
+<span class="n">gsearch</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Elapsed time: </span><span class="si">{}</span><span class="s2"> sec&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+<span class="n">best_score</span> <span class="o">=</span> <span class="n">gsearch</span><span class="o">.</span><span class="n">best_score_</span>
+<span class="n">best_model</span> <span class="o">=</span> <span class="n">gsearch</span><span class="o">.</span><span class="n">best_estimator_</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Finding best params for subject 9961348
+Elapsed time: 276.8463439941406 sec
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>Checking best model performance on test data<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="n">regression_results</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>explained_variance:  0.0
+mean_squared_log_error:  0.2421
+root_mean_squared_log_error:  0.4921
+r2:  -0.1693
+MAE:  1.1061
+MSE:  2.7845
+RMSE:  1.6687
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h1>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h1>
+<p>We see that models trained using the extracted features dataset generally perform better than those trained on the original features. However, both approaches struggle with forecasting the beginning and end of a sleep cycle. This may be due to the fact that we have concatenated different people’s sleep data together, all with different charactersitics that the model has difficulty consolidating into a recognisable pattern.</p>
+<p>It is also interesting to note that different models work better for different subjects. Future work could be done in this area, whereby multiple nights’ sleep are recorded per subject, and a comparison of each model could be carried out to identify a significantly superior algorithm.</p>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By The Jupyter Book community<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

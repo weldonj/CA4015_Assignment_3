@@ -1,0 +1,514 @@
+from google.colab import drive
+drive.mount('/content/drive')
+
+# load the dataset
+%matplotlib inline
+import numpy as np
+import pandas as pd
+from pandas import read_csv
+# load data
+X = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv')
+Y = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv')
+# summarize shape
+print(X.shape)
+print(Y.shape)
+# show first few rows
+print(X.head())
+print(Y.head())
+
+# SORT AND RE LABEL DF 
+
+df = pd.concat([Y, X[X.columns[2:]]], axis=1)
+df = df.rename(columns={"1": "y"})
+df = df.sort_values(["id", "time"])
+df = df.reset_index(drop=True)
+# df["Last Period Label"] = df.groupby(["id"])["y"].shift()
+df = df.dropna()
+df
+
+import matplotlib.pyplot as plt
+
+def plot_predict(train, val, pred):
+
+    val["prediction"] = pred
+
+    f, ax = plt.subplots(figsize=(28, 8))
+
+    recent = train[int(len(train)*0.95):]
+
+    ax.plot(recent.time, recent.y, 'ko', markersize=3, label="train")
+
+    ax.plot(val.time, round(val.prediction), 'ro', markersize=3, label="forecast")
+
+    ax.grid(ls=':', lw=0.5)
+    plt.xlabel("Time elapsed (sec)")
+    plt.ylabel("Sleep Stage")
+    plt.legend()
+
+from sklearn.metrics import mean_squared_log_error
+from sklearn.ensemble import RandomForestRegressor
+from lightgbm import LGBMRegressor
+
+def rmsle(ytrue, ypred):
+    return np.sqrt(mean_squared_log_error(ytrue, ypred))
+
+import sklearn.metrics as metrics
+
+def regression_results(y_true, y_pred):
+  
+    # Regression metrics
+    explained_variance = metrics.explained_variance_score(y_true, y_pred)
+
+    mean_absolute_error=metrics.mean_absolute_error(y_true, y_pred) 
+
+    mse=metrics.mean_squared_error(y_true, y_pred) 
+
+    mean_squared_log_error=metrics.mean_squared_log_error(y_true, y_pred)
+
+    median_absolute_error=metrics.median_absolute_error(y_true, y_pred)
+
+    r2=metrics.r2_score(y_true, y_pred)
+
+    rmsle = np.sqrt(metrics.mean_squared_log_error(y_true, y_pred))
+    
+    print('explained_variance: ', round(explained_variance,4))    
+    print('mean_squared_log_error: ', round(mean_squared_log_error,4))
+    print('root_mean_squared_log_error: ', round(rmsle,4))
+    print('r2: ', round(r2,4))
+    print('MAE: ', round(mean_absolute_error,4))
+    print('MSE: ', round(mse,4))
+    print('RMSE: ', round(np.sqrt(mse),4))
+
+# this baseline will start at the 80th percentile of our data
+# it will guess that the remaining future sleep stages are all the same as
+# the last sleep stage it has seen
+
+mean_error = []
+print(len(df))
+for t in range(int(len(df)*0.8), len(df), 500):
+    timestep = df.iloc[t]["time"]
+
+    train = df.loc[df["time"] < timestep]
+    val = df.loc[df["time"] >= timestep]
+
+    p = np.full(shape=len(val), fill_value=train.iloc[-1].y, dtype=np.int)
+
+    error = rmsle(val['y'].values, p)
+    print('Time {}sec - Error {}'.format(timestep, error))
+    mean_error.append(error)
+print('Mean Error = {}'.format(np.mean(mean_error)))
+
+
+# a large proportion of our data is in NREM 2 stage,
+# so even guessing label 2 will get you a "good" accuracy score
+df['y'].hist(bins=20, figsize=(10,5))
+
+# this cell builds a random forest regressor from the first 80%
+# of rows from our data
+# it then attempts to predict the next row and calcualtes the rmsle
+timestep = df.iloc[int(len(df)*0.8)]["time"]
+
+train = df.loc[df["time"] < timestep]
+val = df.loc[df["time"] == timestep]
+
+xtr, xts = train.drop(['y'], axis=1), val.drop(['y'], axis=1)
+ytr, yts = train['y'].values, val['y'].values
+
+mdl = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=0)
+mdl.fit(xtr, ytr)
+
+p = mdl.predict(xts)
+
+error = rmsle(yts, p)
+print('Time {}sec - Error {}'.format(timestep, error))
+
+minutes_ahead = 20
+predict_window = int((minutes_ahead*60))
+
+nxts = df.loc[(df['time'] >= timestep) & (df['time'] <= timestep+predict_window)].drop(["y"], axis=1)
+
+nyts = df.loc[(df['time'] >= timestep) & (df['time'] <= timestep+predict_window)]["y"].values
+
+pred = mdl.predict(nxts)
+
+error = rmsle(nyts, pred)
+print("{} minute prediction error: {}".format(minutes_ahead, error))
+print("test length: {}".format(len(nxts)))
+
+plot_predict(train, nxts, pred)
+
+# this function allows us to iteratively train our model
+# in steps of 1500 index, predicting "x" mins ahead
+
+def rf_forecast(df, minutes_ahead=20, step_rate=1500):
+    mean_error = []
+    predict_window = minutes_ahead*60
+
+    print("Creating {} models for {} minute prediction windows".format(
+        int(round(len(df)*0.2/step_rate)), minutes_ahead
+    ))
+
+    for t in range(int(len(df)*0.8), len(df)-minutes_ahead*2, step_rate):
+        timestep = df.iloc[t]["time"]
+
+        train = df.loc[df["time"] < timestep].copy()
+        val = df.loc[(df['time'] >= timestep) & (df['time'] <= timestep+predict_window)].copy()
+
+        xtr, xts = train.drop(['y'], axis=1), val.drop(['y'], axis=1)
+        ytr, yts = train['y'].values, val['y'].values
+
+        mdl = RandomForestRegressor(n_estimators=100, n_jobs=-1, random_state=0)
+        # mdl = LGBMRegressor(n_estimators=100, learning_rate=0.01)
+
+        mdl.fit(xtr, np.log1p(ytr))
+
+        p = np.expm1(mdl.predict(xts))
+
+        error = rmsle(yts, p)
+        print("{} minute prediction error: {}".format(minutes_ahead, error))
+        mean_error.append(error)
+
+        plot_predict(train, val, p)
+
+    print('Mean Error = %.5f' % np.mean(mean_error))
+
+rf_forecast(df)
+
+# this function allows us to iteratively train our model
+# in steps of 1500, predicting "x" mins ahead
+
+def gradient_boost_forecast(df, minutes_ahead=20, step_rate=1500):
+    mean_error = []
+    predict_window = minutes_ahead*60
+
+    print("Creating {} models for {} minute prediction windows".format(
+        int(round(len(df)*0.2/step_rate)), minutes_ahead
+    ))
+
+    for t in range(int(len(df)*0.8), len(df)-minutes_ahead*2, step_rate):
+        timestep = df.iloc[t]["time"]
+
+        train = df.loc[df["time"] < timestep].copy()
+        val = df.loc[(df['time'] >= timestep) & (df['time'] <= timestep+predict_window)].copy()
+
+        xtr, xts = train.drop(['y'], axis=1), val.drop(['y'], axis=1)
+        ytr, yts = train['y'].values, val['y'].values
+
+        mdl = LGBMRegressor(n_estimators=100, learning_rate=0.01)
+
+        mdl.fit(xtr, np.log1p(ytr))
+
+        p = np.expm1(mdl.predict(xts))
+
+        error = rmsle(yts, p)
+        print("{} minute prediction error: {}".format(minutes_ahead, error))
+        mean_error.append(error)
+
+        plot_predict(train, val, p)
+
+    print('Mean Error = %.5f' % np.mean(mean_error))
+
+predictions = gradient_boost_forecast(df)
+
+# splitting our test subjects up and keeping our large training set
+
+full_set = df.id.unique()
+subject_df = {}
+
+base_set = df[df["id"] == full_set[0]]
+
+for i, subj in enumerate(full_set[1:-1]):
+    subject_df[subj] = df[df["id"] == subj]
+    subject_df[subj]["time"] += (24*60*60*(i+1))  # i days = 86,400sec * i days
+
+    base_set = pd.concat([base_set, subject_df[subj]], axis=0)
+
+for subj in full_set[-1:]:
+    subject_df[subj] = df[df["id"] == subj]
+    subject_df[subj]["time"] += (24*60*60*(i+2))
+
+#subject_df
+
+from sklearn.model_selection import cross_val_score
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import TimeSeriesSplit
+import statistics
+import time
+
+
+def cross_val_forecast(base_set, new_df, label="y", n_splits=5):
+    results = []
+    names = []
+
+    models = []
+    models.append(('Linear Regression', LinearRegression()))
+    models.append(('KNN Regressor', KNeighborsRegressor())) 
+    models.append(('Random Forest Regressor', RandomForestRegressor(n_estimators = 100)))
+    models.append(('Support Vector Regression', SVR(gamma='auto'))) # kernel = linear
+    models.append(("Gradient Boosted Trees", LGBMRegressor(n_estimators=100, learning_rate=0.01)))
+    # models.append(('NN', MLPRegressor(solver = 'lbfgs', max_iter=10000)))  #neural network
+    
+
+    print("Creating {} models for cross validation".format(len(models)))
+
+    start = time.time()
+    # loop through each model
+    for name, model in models:
+
+        cv_results = []
+        tscv = TimeSeriesSplit(n_splits=n_splits)
+        print(name, ":")
+        
+        # loop through each split
+        for i, (train_i, val_i) in enumerate(tscv.split(new_df)):
+            train = pd.concat([base_set, new_df.copy().iloc[train_i, :]], axis=0)
+            val = new_df.copy().iloc[val_i, :]
+
+            print("length of training data: {}".format(len(train)))
+            print("length of validation data: {}".format(len(val)))
+
+            xtr, xts = train.drop([label], axis=1), val.drop([label], axis=1)
+            ytr, yts = train[label].values, val[label].values
+
+            model.fit(xtr, np.log1p(ytr))
+
+            p = np.expm1(model.predict(xts))
+
+            error = rmsle(yts, abs(p))
+            print("Test set prediction error (rmsle): {}\n".format(error))
+
+            cv_results.append(error)
+
+        print("{} Mean error: {}\t95% conf interval: {}".format(name, statistics.mean(cv_results), np.std(cv_results)*2))
+
+        print("Time elapsed {}\n".format(time.time() - start))
+
+        results.append(cv_results)
+        names.append(name)
+
+
+    return results, names
+
+
+import pickle
+import os
+
+path = "/content/drive/My Drive/CA4015/sleep_classify/subject_results.pkl"
+
+if not os.path.exists(path):
+
+    subject_results = {}
+
+    for sub in full_set[-1:]:
+        df = subject_df[sub].copy()
+        print("\nCross Validating models for subject {}\n".format(sub))
+        results, names = cross_val_forecast(base_set, df)
+        subject_results[sub] = [results, names]
+
+    with open(path, 'wb') as handle:
+        pickle.dump(subject_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+else:
+    with open(path, 'rb') as handle:
+        subject_results = pickle.load(handle)
+
+# Compare Algorithms
+for sub in full_set[-1:]:
+
+    results, names = subject_results[sub][0], subject_results[sub][1]
+    plt.figure(figsize=(15,15))
+    plt.boxplot(results, labels=names)
+    plt.title('Algorithm Comparison for subject {}'.format(sub))
+    plt.xlabel("Algorithm")
+    plt.ylabel("Root Mean Squared Log Error rate")
+    plt.show()
+
+from sklearn.metrics import make_scorer
+
+def rmse(actual, predict):
+
+    predict = np.array(predict)
+    actual = np.array(actual)
+
+    distance = predict - actual
+
+    square_distance = distance ** 2
+
+    mean_square_distance = square_distance.mean()
+
+    score = np.sqrt(mean_square_distance)
+
+    return score
+    
+rmse_score = make_scorer(rmse, greater_is_better = False)
+
+# find best params for subject
+
+new_df = subject_df[full_set[-1]]
+print("Finding best params for subject {}".format(full_set[-1]))
+
+X_full = pd.concat([base_set, new_df.copy()], axis=0)
+X_train, X_test = X_full[:int(len(X_full)*0.8)].drop(["y"], axis=1), X_full[int(len(X_full)*0.8):].drop(["y"], axis=1)
+y_train, y_test = X_full[:int(len(X_full)*0.8)]["y"].values, X_full[int(len(X_full)*0.8):]["y"].values
+
+
+from sklearn.model_selection import GridSearchCV
+
+model = RandomForestRegressor()
+
+param_search = { 
+    'n_estimators': [20, 50, 100],
+    'max_features': ['auto', 'sqrt', 'log2'],
+    'max_depth' : [i for i in range(5,15)]
+    }
+
+# model = SVR()
+
+# param_search = { 
+#     'kernel': ["linear", "poly", "rbf", "sigmoid"],
+#     'degree': [2, 5, 10],
+#     'gamma': ["scale", "auto"],
+#     'C' : [i for i in range(1,5)]
+#     }
+
+tscv = TimeSeriesSplit(n_splits=5)
+
+start = time.time()
+
+gsearch = GridSearchCV(estimator=model, cv=tscv,
+                       param_grid=param_search, scoring = rmse_score)
+
+gsearch.fit(X_train, y_train)
+
+print("Elapsed time: {} sec".format(time.time() - start))
+
+best_score = gsearch.best_score_
+best_model = gsearch.best_estimator_
+
+y_pred = best_model.predict(X_test)
+
+regression_results(y_test, y_pred)
+
+# load the dataset
+X = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_features.csv')
+Y = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/raw_windowed_labels.csv')
+# summarize shape
+print(X.shape)
+print(Y.shape)
+# show first few rows
+print(X.head())
+print(Y.head())
+
+# SORT AND RE LABEL DF 
+
+df = pd.concat([Y, X[X.columns[1:-1]]], axis=1)
+df = df.rename(columns={"1": "label", "0": "time"})
+df = df.sort_values(["id", "time"])
+df = df.reset_index(drop=True)
+df = df.dropna()
+df
+
+# splitting our test subjects up and keeping our large training set
+
+full_set = df.id.unique()
+subject_df = {}
+
+base_set = df[df["id"] == full_set[0]]
+
+for i, subj in enumerate(full_set[1:-3]):
+    subject_df[subj] = df[df["id"] == subj]
+    subject_df[subj]["time"] += (24*60*60*(i+1))  # i days = 86,400sec * i days
+
+    base_set = pd.concat([base_set, subject_df[subj]], axis=0)
+
+for subj in full_set[-3:]:
+    subject_df[subj] = df[df["id"] == subj]
+    subject_df[subj]["time"] += (24*60*60*(i+2))
+
+import pickle
+import os
+
+path = "/content/drive/My Drive/CA4015/sleep_classify/raw_subject_results.pkl"
+
+if not os.path.exists(path):
+
+    subject_results = {}
+
+    for sub in full_set[-3:]:
+
+        df = subject_df[sub].copy()
+        print("\nCross Validating models for subject {}\n".format(sub))
+        results, names = cross_val_forecast(base_set, df, label="label")
+        subject_results[sub] = [results, names]
+
+    with open(path, 'wb') as handle:
+        pickle.dump(subject_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+else:
+    with open(path, 'rb') as handle:
+        subject_results = pickle.load(handle)
+
+# Compare Algorithms
+for sub in full_set[-3:]:
+
+    results, names = subject_results[sub][0], subject_results[sub][1]
+    plt.figure(figsize=(15,15))
+    plt.boxplot(results, labels=names)
+    plt.title('Algorithm Comparison for subject {}'.format(sub))
+    plt.xlabel("Algorithm")
+    plt.ylabel("Root Mean Squared Log Error rate")
+    plt.show()
+
+# find best params for subject
+
+new_df = subject_df[full_set[-1]]
+print("Finding best params for subject {}".format(full_set[-1]))
+
+X_full = pd.concat([base_set, new_df.copy()], axis=0)
+X_train, X_test = X_full[:int(len(X_full)*0.8)].drop(["label"], axis=1), X_full[int(len(X_full)*0.8):].drop(["label"], axis=1)
+y_train, y_test = X_full[:int(len(X_full)*0.8)]["label"].values, X_full[int(len(X_full)*0.8):]["label"].values
+
+
+from sklearn.model_selection import GridSearchCV
+
+model = KNeighborsRegressor()
+
+param_search = { 
+    'n_neighbors': [2, 5, 10],
+    'algorithm': ['auto', 'ball_tree', 'brute'],
+    'p' : [1, 2, 4]
+    }
+
+
+# model = LGBMRegressor()
+
+# param_search = { 
+#     'boosting_type': ["gbdt", "dart", "goss", "rf"],
+#     'n_estimators': [20, 50, 100],
+#     'learning_rate': [0.01, 0.05, 0.1, 0.3, 0.6],
+#     'max_depth' : [i for i in range(0,10)]
+#     }
+
+tscv = TimeSeriesSplit(n_splits=5)
+
+start = time.time()
+
+gsearch = GridSearchCV(estimator=model, cv=tscv,
+                       param_grid=param_search, scoring = rmse_score)
+
+gsearch.fit(X_train, y_train)
+
+print("Elapsed time: {} sec".format(time.time() - start))
+
+best_score = gsearch.best_score_
+best_model = gsearch.best_estimator_
+
+y_pred = best_model.predict(X_test)
+
+regression_results(y_test, y_pred)

@@ -1,0 +1,196 @@
+# Install fbprophet as it's not there by default on Colab instances
+
+pip install fbprophet
+
+# import the required packages and libraries
+
+import numpy as np
+import pandas as pd
+import fbprophet
+from plotnine import * 
+from sklearn.model_selection import TimeSeriesSplit 
+from fbprophet import Prophet 
+from datetime import datetime
+from pandas import read_csv
+
+# import our google drive
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+# load data
+X = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features.csv')
+Y = pd.read_csv('/content/drive/My Drive/CA4015/sleep_classify/extracted_features_labels.csv')
+# summarize shape
+print(X.shape)
+print(Y.shape)
+# show first few rows
+print(X.head())
+print(Y.head())
+
+full_df = pd.concat([Y[["time", "1"]], X[X.columns[2:]]], axis=1)
+print(full_df.shape)
+
+# add subject id back in
+full_df = pd.concat([Y[["time", "1", "id"]], X[X.columns[2:]]], axis=1)
+
+# convert time column into fbProphet-friendly datetime format
+full_df = full_df.rename(columns={"time": "ds", "1": "y"})
+full_df["ds"] = full_df['ds'] = pd.to_datetime(full_df['ds'], unit='s')
+
+# creates a dictionary of each sleep subject's dataframe
+
+dfs = dict(tuple(full_df.groupby('id')))
+
+# gets us the list of unique subject IDs
+
+id_list = list(full_df['id'])
+id_set = set(id_list)
+id_list = list(id_set)
+
+# sets the amount of splits we want per dataframe
+
+tscv = TimeSeriesSplit(n_splits=5)
+
+def pro_ds_data_gen(df,tscv,daily_seasonality=True,weekly_seasonality=False,yearly_seasonality=False):
+    out_df=pd.DataFrame()
+    for i,(train_i,test_i) in enumerate(tscv.split(df)): #For Time Series Split
+        #Use indexes to grab the correct data for this split
+        train_df=df.copy().iloc[train_i,:]
+        test_df=df.copy().iloc[test_i,:]
+        #Build our model using prophet and make predictions on the test set
+        model=Prophet(
+            daily_seasonality=daily_seasonality,
+            yearly_seasonality=yearly_seasonality,
+            weekly_seasonality=weekly_seasonality
+        )
+        model.fit(train_df)
+        predictions=model.predict(test_df)
+
+        #Combine predictions and training into one df for plotting
+        pred_df=predictions.loc[:,["ds","yhat"]]
+        pred_df["y"]=test_df.y.tolist()
+        train_df["train"]="Train"
+        pred_df["train"]="Test"
+        sub_df=train_df.append(pred_df).reset_index(drop=True)
+        sub_df["split"]="Split "+str(i+1)
+        sub_df["rmse"]=(np.mean((sub_df.yhat-sub_df.y)**2))**.5 #calculating rmse for the split
+        out_df=out_df.append(sub_df).reset_index(drop=True)
+    return out_df
+
+# Subject 46343 was chosen as the subject to try out first 
+
+dfs[46343] = dfs[46343][['ds','y']]
+year_weak_seas_df=pro_ds_data_gen(dfs[46343],tscv, True, False, False)
+
+(ggplot(year_weak_seas_df,aes("ds","y",color="factor(train)"))+\
+ geom_point()+facet_grid('split~.'))+\
+labs(title="Train/Test Splits",x="Time",y="Sleep Stage")+\
+scale_x_date(date_breaks="6 months",date_labels =  "%b %Y")
+
+# gets us the root mean squared error between the actual y values and the predicted y values in our test splits
+from sklearn.metrics import mean_squared_error
+rmse_df = year_weak_seas_df[year_weak_seas_df['train'] == "Test"]
+rms = mean_squared_error(rmse_df['y'], rmse_df['yhat'], squared=False)
+print(rms)
+
+
+
+
+
+# loops through our training/test splits and creates a single yhat column for plotting purposes
+# also ensures that any sleep stage predictions that have gone above 5 are set back to 5 and any that have gone below 0 are set back to 0, keeping us in our 0-5 range for the cycle
+for i in range(0,len(year_weak_seas_df)):
+  if pd.isnull(year_weak_seas_df.iloc[i,3]):
+    year_weak_seas_df.iloc[i,3] = year_weak_seas_df.iloc[i,1]
+  if float(year_weak_seas_df.iloc[i,3]) > 5:
+    year_weak_seas_df.iloc[i,3] = 5
+  elif float(year_weak_seas_df.iloc[i,3]) < 0:
+    year_weak_seas_df.iloc[i,3] = 0
+year_weak_seas_df["yhat"] = year_weak_seas_df["yhat"].astype(int)
+year_weak_seas_df["yhat"] = year_weak_seas_df["yhat"].astype(str)
+
+# gets us the root mean squared error between the actual y values and the predicted y values in our test splits
+from sklearn.metrics import mean_squared_error
+rmse_df = year_weak_seas_df[year_weak_seas_df['train'] == "Test"]
+rms = mean_squared_error(rmse_df['y'], rmse_df['yhat'], squared=False)
+print(rms)
+
+
+# plot the true splits once more, as above
+
+(ggplot(year_weak_seas_df,aes("ds","y",color="factor(train)"))+\
+ geom_point()+facet_grid('split~.'))+\
+labs(title="Train/Test Splits",x="Time",y="Sleep Stage")+\
+scale_x_date(date_breaks="6 months",date_labels =  "%b %Y")
+
+
+# plot the predicted splits
+
+(ggplot(year_weak_seas_df,aes("ds","yhat",color="factor(train)"))+\
+ geom_point()+facet_grid('split~.'))+\
+labs(title="Train/Test Splits",x="Time",y="Sleep Stage")+\
+scale_x_date(date_breaks="6 months",date_labels =  "%b %Y")
+
+# this will incrementally add one day to the datetime for each subject, essentially creating a 31 day range instead of the same date per subject
+
+i = 1
+for subject, df in dfs.items():
+  dfs[subject] = dfs[subject][['ds','y']]
+  dfs[subject]['ds'] = df['ds'].apply(lambda dt: dt.replace(day=i))
+  i = i + 1
+
+joined_df = pd.DataFrame()
+
+i = 1
+for subject, df in dfs.items():
+  if i < len(dfs):
+    joined_df = pd.concat([joined_df, df], ignore_index=True)
+  else:
+    test_df = df
+  i = i + 1
+
+joined_df
+
+i = 0
+for row in test_df:
+  while i < len(test_df)/2:
+    joined_df = joined_df.append(test_df.iloc[i])
+    i = i + 1
+
+
+
+
+test_df = test_df.iloc[int(len(test_df)/2):]
+
+test_df.ds = pd.to_datetime(test_df.ds)
+
+from fbprophet import Prophet
+model = Prophet(daily_seasonality=True, yearly_seasonality=False, weekly_seasonality=False)
+
+model.fit(joined_df)
+
+forecast = model.predict(test_df)
+
+joined_forecast = pd.DataFrame()
+joined_forecast = pd.concat([test_df[['ds','y']].reset_index(), forecast[['yhat']].reset_index()], axis=1)
+
+joined_forecast
+
+for i in range(0,len(joined_forecast)):
+  joined_forecast.iloc[i,4] = round(float(joined_forecast.iloc[i,4]))
+  
+  if float(joined_forecast.iloc[i,4]) > 5:
+    joined_forecast.iloc[i,4] = 5
+  elif float(joined_forecast.iloc[i,4]) < 0:
+    joined_forecast.iloc[i,4] = 0
+
+joined_forecast["yhat"] = joined_forecast["yhat"].astype(int)
+joined_forecast["yhat"] = joined_forecast["yhat"].astype(str)
+
+joined_forecast
+
+from sklearn.metrics import mean_squared_error
+rmse_df = joined_forecast
+rms = mean_squared_error(rmse_df['y'], rmse_df['yhat'], squared=False)
+print(rms)
