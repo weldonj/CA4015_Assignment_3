@@ -3,11 +3,11 @@
 
 - part: Univariate Forecasting with FBProphet
   chapters:
-  - file: univariate_fbp
+  - file: firstpage
 
-- part: Multivariate Forecasting with VAR
+- part: Multivariate Forecasting
   chapters:
-  - file: forecasting  
+  - file: secondpage 
 
 - part: Concluding Section
   chapters:
